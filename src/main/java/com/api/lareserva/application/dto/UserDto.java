@@ -9,15 +9,15 @@ import lombok.*;
 @Builder
 public class UserDto {
 
-    private Integer id;
+  private Integer id;
 
-    private String name;
+  private String name;
 
-    private String cpf;
+  private String cpf;
 
-    private String phoneNumber;
+  private String phoneNumber;
 
-    private String email;
+  private String email;
 
-    private String password;
+  private String password;
 }
