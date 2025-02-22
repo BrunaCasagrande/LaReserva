@@ -1,5 +1,7 @@
 package com.api.lareserva.application.domain;
 
+import com.api.lareserva.application.dto.RestaurantDto;
+import com.api.lareserva.application.dto.UserDto;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalTime;
 import java.util.Date;
@@ -24,17 +26,17 @@ public class Reservation {
   private Integer numberOfPeople;
 
   @NotNull(message = "Restaurant is required")
-  private Restaurant restaurant;
+  private RestaurantDto restaurant;
 
   @NotNull(message = "User is required")
-  private User user;
+  private UserDto user;
 
   public static Reservation createReservation(
       final Date reservationDate,
       final LocalTime reservationTime,
       final Integer numberOfPeople,
-      final Restaurant restaurant,
-      final User user) {
+      final RestaurantDto restaurant,
+      final UserDto user) {
     return Reservation.builder()
         .reservationDate(reservationDate)
         .reservationTime(reservationTime)

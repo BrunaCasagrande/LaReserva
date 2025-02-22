@@ -1,5 +1,7 @@
 package com.api.lareserva.application.domain;
 
+import com.api.lareserva.application.dto.RestaurantDto;
+import com.api.lareserva.application.dto.UserDto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -24,16 +26,16 @@ public class Rating {
     private Date date;
 
     @NotNull(message = "Restaurant is required")
-    private Restaurant restaurant;
+    private RestaurantDto restaurant;
 
     @NotNull(message = "User is required")
-    private User user;
+    private UserDto user;
 
     public static Rating createRating(final Integer stars,
                                       final String comment,
                                       final Date date,
-                                      final Restaurant restaurant,
-                                      final User user){
+                                      final RestaurantDto restaurant,
+                                      final UserDto user){
         return Rating.builder()
                 .stars(stars)
                 .comment(comment)
