@@ -7,7 +7,7 @@ public interface UserGateway {
 
   User save(final User user);
 
-  Optional<User> findById(final int id);
+  Optional<User> findByCpf(final String cpf);
 
   User update(final User user);
 

@@ -32,8 +32,8 @@ public class UserGatewayImpl implements UserGateway {
   }
 
   @Override
-  public Optional<User> findById(final int id) {
-    final var entity = userRepository.findById(id);
+  public Optional<User> findByCpf(final String cpf) {
+    final var entity = userRepository.findByCpf(cpf);
 
     return entity.map(this::toResponse);
   }
