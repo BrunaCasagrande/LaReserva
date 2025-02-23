@@ -1,4 +1,3 @@
 package com.api.lareserva.application.gateway;
 
-public interface OpeningHourGateway {
-}
+public interface OpeningHourGateway {}
