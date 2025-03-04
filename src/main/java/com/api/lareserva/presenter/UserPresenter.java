@@ -1,6 +1,6 @@
 package com.api.lareserva.presenter;
 
-import com.api.lareserva.application.domain.User;
+import com.api.lareserva.core.domain.User;
 import com.api.lareserva.presenter.response.UserPresenterResponse;
 import org.springframework.stereotype.Component;
 

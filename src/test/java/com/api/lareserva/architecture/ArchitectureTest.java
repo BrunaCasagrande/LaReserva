@@ -26,11 +26,10 @@ public class ArchitectureTest {
   private static final ArchRule DOMAIN_DOES_NOT_DEPEND_ON_ANYONE =
       classes()
           .that()
-          .resideInAPackage("..application.domain..")
+          .resideInAPackage("..core.domain..")
           .should()
           .onlyDependOnClassesThat()
-          .resideInAnyPackage(
-              "..application.domain..", "..application.dto..", "java..", "lombok..", "jakarta..")
+          .resideInAnyPackage("..core.domain..", "..core.dto..", "java..", "lombok..", "jakarta..")
           .as("Domain should be independent")
           .allowEmptyShould(true);
 
@@ -40,11 +39,11 @@ public class ArchitectureTest {
       layeredArchitecture()
           .consideringAllDependencies()
           .layer("usecase")
-          .definedBy("..application.usecase..")
+          .definedBy("..core.usecase..")
           .layer("config")
-          .definedBy("..infrastructure.config..")
+          .definedBy("..entrypoint.config..")
           .layer("controller")
-          .definedBy("..infrastructure.controller..")
+          .definedBy("..entrypoint.controller..")
           .layer("presenter")
           .definedBy("..presenter..")
           .whereLayer("usecase")
@@ -56,49 +55,48 @@ public class ArchitectureTest {
   private static final ArchRule GATEWAY_MAY_ONLY_BE_ACCESSED_BY_USE_CASE_AND_INFRA_GATEWAY =
       layeredArchitecture()
           .consideringAllDependencies()
-          .layer("application_gateway")
-          .definedBy("..application.gateway..")
+          .layer("core_gateway")
+          .definedBy("..core.gateway..")
           .layer("infra_gateway")
-          .definedBy("..infrastructure.gateway..")
+          .definedBy("..infra.gateway..")
           .layer("usecase")
-          .definedBy("..application.usecase..")
-          .whereLayer("application_gateway")
+          .definedBy("..core.usecase..")
+          .whereLayer("core_gateway")
           .mayOnlyBeAccessedByLayers("infra_gateway", "usecase")
           .allowEmptyShould(true);
 
   @ArchTest
   private static final ArchRule GATEWAY_MUST_BE_INTERFACE =
-      classes().that().resideInAPackage("..application.gateway..").should().beInterfaces();
+      classes().that().resideInAPackage("..core.gateway..").should().beInterfaces();
 
   @ArchTest
   private static final ArchRule GATEWAY_SHOULD_NOT_DEPEND_ON_EXTERNAL_PACKAGES =
       classes()
           .that()
-          .resideInAPackage("application.gateway..")
+          .resideInAPackage("core.gateway..")
           .should()
           .onlyDependOnClassesThat()
-          .resideInAnyPackage("..application.domain..", "java..", "lombok..", "jakarta..")
+          .resideInAnyPackage("..core.domain..", "java..", "lombok..", "jakarta..")
           .as("Gateway interfaces should be independent of external classes.")
           .allowEmptyShould(true);
 
   /* CONTROLLER */
   @ArchTest
-  private static final ArchRule REST_CONTROLLERS_MUST_RESIDE_IN_CONTROLLER_PACKAGE =
+  private static final ArchRule REST_CONTROLLERS_MUST_RESIDE_IN_ENTRYPOINT_PACKAGE =
       classes()
           .that()
           .areAnnotatedWith(RestController.class)
           .should()
-          .resideInAPackage("..infrastructure.controller..")
-          .as(
-              "Controllers should reside in a package 'com.api.lareserva.infrastructure.controller'.")
+          .resideInAPackage("..entrypoint.controller..")
+          .as("Controllers should reside in a package 'com.api.lareserva.entrypoint.controller'.")
           .allowEmptyShould(true);
 
   @ArchTest
-  private static final ArchRule LAYER_CONTROLLER_ARE_RESPECTED =
+  private static final ArchRule LAYER_ENTRYPOINT_ARE_RESPECTED =
       layeredArchitecture()
           .consideringAllDependencies()
           .layer("controller")
-          .definedBy("..infrastructure.controller..")
+          .definedBy("..entrypoint.controller..")
           .whereLayer("controller")
           .mayNotBeAccessedByAnyLayer()
           .allowEmptyShould(true);
@@ -164,7 +162,7 @@ public class ArchitectureTest {
       layeredArchitecture()
           .consideringAllDependencies()
           .layer("infra")
-          .definedBy("..infrastructure..")
+          .definedBy("..infra..")
           .layer("main")
           .definedBy("com.api.lareserva..")
           .whereLayer("infra")
