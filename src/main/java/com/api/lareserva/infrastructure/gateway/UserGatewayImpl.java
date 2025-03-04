@@ -45,7 +45,10 @@ public class UserGatewayImpl implements UserGateway {
   @Override
   public User update(final User user) {
     try {
-      final var entity = userRepository.findById(user.getId()).orElseThrow();
+      final var entity =
+          userRepository
+              .findById(user.getId())
+              .orElseThrow(() -> new GatewayException(format(FIND_ERROR_MESSAGE, user.getId())));
 
       entity.setPhoneNumber(user.getPhoneNumber());
       entity.setEmail(user.getEmail());

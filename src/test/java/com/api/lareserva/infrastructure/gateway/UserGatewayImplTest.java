@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
-import com.api.lareserva.application.usecase.exception.UserNotFoundException;
+import com.api.lareserva.infrastructure.gateway.exception.GatewayException;
 import com.api.lareserva.infrastructure.persistence.entity.UserEntity;
 import com.api.lareserva.infrastructure.persistence.repository.UserRepository;
 import java.util.Optional;
@@ -86,7 +86,7 @@ class UserGatewayImplTest {
     when(userRepository.findById(NONEXISTENT_ID)).thenReturn(Optional.empty());
 
     assertThatThrownBy(() -> userGateway.update(nonExistentUser))
-        .isInstanceOf(UserNotFoundException.class)
+        .isInstanceOf(GatewayException.class)
         .hasMessage("User with id=[99] not found.");
 
     verify(userRepository).findById(NONEXISTENT_ID);

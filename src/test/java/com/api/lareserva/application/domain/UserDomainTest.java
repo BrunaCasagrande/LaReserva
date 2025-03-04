@@ -38,7 +38,7 @@ class UserDomainTest {
   }
 
   @ParameterizedTest
-  @NullAndEmptySource
+  @NullSource
   @ValueSource(strings = {"123", "123456789012345", "abcdefghijklmno"})
   void shouldNotCreateWhenCpfIsInvalid(final String invalidCpf) {
     assertThatThrownBy(
