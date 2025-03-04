@@ -59,7 +59,7 @@ class UserControllerTest {
   }
 
   @Test
-  void shouldReturnConflictWhenCpfAlreadyExists() throws Exception {
+  void shouldThrowAnExceptionWhenCpfAlreadyExists() throws Exception {
 
     final var request = validRequest();
 
