@@ -1,10 +1,22 @@
 package com.api.lareserva.application.domain;
 
+import com.api.lareserva.application.domain.exception.DomainException;
+import com.api.lareserva.application.domain.exception.ErrorDetail;
 import com.api.lareserva.application.dto.RestaurantDto;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalTime;
-import lombok.*;
+import java.util.List;
+import java.util.Set;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -32,11 +44,39 @@ public class OpeningHour {
       final LocalTime openTime,
       final LocalTime closeTime,
       final RestaurantDto restaurant) {
-    return OpeningHour.builder()
-        .dayOfWeek(dayOfWeek)
-        .openTime(openTime)
-        .closeTime(closeTime)
-        .restaurant(restaurant)
-        .build();
+
+    final var openingHour =
+        OpeningHour.builder()
+            .dayOfWeek(dayOfWeek)
+            .openTime(openTime)
+            .closeTime(closeTime)
+            .restaurant(restaurant)
+            .build();
+
+    validate(openingHour);
+
+    return openingHour;
+  }
+
+  private static void validate(final OpeningHour openingHour) {
+    final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+    final Validator validator = factory.getValidator();
+    final Set<ConstraintViolation<OpeningHour>> violations = validator.validate(openingHour);
+
+    if (!violations.isEmpty()) {
+      final List<ErrorDetail> errors =
+          violations.stream()
+              .map(
+                  violation ->
+                      new ErrorDetail(
+                          violation.getPropertyPath().toString(),
+                          violation.getMessage(),
+                          violation.getInvalidValue()))
+              .toList();
+
+      final String firstErrorMessage = errors.get(0).errorMessage();
+
+      throw new DomainException(firstErrorMessage, "domain_exception", errors);
+    }
   }
 }

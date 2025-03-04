@@ -1,8 +1,19 @@
 package com.api.lareserva.application.domain;
 
+import com.api.lareserva.application.domain.exception.DomainException;
+import com.api.lareserva.application.domain.exception.ErrorDetail;
 import com.api.lareserva.application.dto.OpeningHourDto;
-import jakarta.validation.constraints.*;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import java.util.List;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,7 +36,7 @@ public class Restaurant {
   @Pattern(regexp = "\\d{14}", message = "CNPJ must be 14 digits")
   private String cnpj;
 
-  @NotBlank(message = "Address required")
+  @NotBlank(message = "Address is required")
   private String address;
 
   @NotBlank(message = "City is required")
@@ -48,12 +59,11 @@ public class Restaurant {
   private List<OpeningHourDto> openingHour;
 
   @NotBlank(message = "E-mail is required")
-  @Size(max = 255, message = "Email length must be less than 255 characters")
-  @Email(message = "Email should be valid")
+  @Size(max = 255, message = "E-mail length must be less than 255 characters")
+  @Email(message = "E-mail should be valid")
   private String email;
 
   @NotBlank(message = "Password is required")
-  @Size(min = 8, max = 16, message = "Password length must be between 8 and 16 characters")
   @Pattern(
       regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$",
       message =
@@ -72,18 +82,46 @@ public class Restaurant {
       final List<OpeningHourDto> openingHour,
       final String email,
       final String password) {
-    return Restaurant.builder()
-        .restaurantName(restaurantName)
-        .cnpj(cnpj)
-        .address(address)
-        .city(city)
-        .phoneNumber(phoneNumber)
-        .typeOfFood(typeOfFood)
-        .capacity(capacity)
-        .numberOfTables(numberOfTables)
-        .openingHour(openingHour)
-        .email(email)
-        .password(password)
-        .build();
+
+    final var restaurant =
+        Restaurant.builder()
+            .restaurantName(restaurantName)
+            .cnpj(cnpj)
+            .address(address)
+            .city(city)
+            .phoneNumber(phoneNumber)
+            .typeOfFood(typeOfFood)
+            .capacity(capacity)
+            .numberOfTables(numberOfTables)
+            .openingHour(openingHour)
+            .email(email)
+            .password(password)
+            .build();
+
+    validate(restaurant);
+
+    return restaurant;
+  }
+
+  private static void validate(final Restaurant restaurant) {
+    final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+    final Validator validator = factory.getValidator();
+    final Set<ConstraintViolation<Restaurant>> violations = validator.validate(restaurant);
+
+    if (!violations.isEmpty()) {
+      final List<ErrorDetail> errors =
+          violations.stream()
+              .map(
+                  violation ->
+                      new ErrorDetail(
+                          violation.getPropertyPath().toString(),
+                          violation.getMessage(),
+                          violation.getInvalidValue()))
+              .toList();
+
+      final String firstErrorMessage = errors.get(0).errorMessage();
+
+      throw new DomainException(firstErrorMessage, "domain_exception", errors);
+    }
   }
 }

@@ -1,10 +1,22 @@
 package com.api.lareserva.application.domain;
 
+import com.api.lareserva.application.domain.exception.DomainException;
+import com.api.lareserva.application.domain.exception.ErrorDetail;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.*;
+import java.util.List;
+import java.util.Set;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -27,12 +39,11 @@ public class User {
   private String phoneNumber;
 
   @NotBlank(message = "E-mail is required")
-  @Size(max = 255, message = "Email length must be less than 255 characters")
-  @Email(message = "Email should be valid")
+  @Size(max = 255, message = "E-mail length must be less than 255 characters")
+  @Email(message = "E-mail should be valid")
   private String email;
 
   @NotBlank(message = "Password is required")
-  @Size(min = 8, max = 16, message = "Password length must be between 8 and 16 characters")
   @Pattern(
       regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,16}$",
       message =
@@ -45,12 +56,40 @@ public class User {
       final String phoneNumber,
       final String email,
       final String password) {
-    return User.builder()
-        .name(name)
-        .cpf(cpf)
-        .phoneNumber(phoneNumber)
-        .email(email)
-        .password(password)
-        .build();
+
+    final var user =
+        User.builder()
+            .name(name)
+            .cpf(cpf)
+            .phoneNumber(phoneNumber)
+            .email(email)
+            .password(password)
+            .build();
+
+    validate(user);
+
+    return user;
+  }
+
+  private static void validate(final User user) {
+    final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+    final Validator validator = factory.getValidator();
+    final Set<ConstraintViolation<User>> violations = validator.validate(user);
+
+    if (!violations.isEmpty()) {
+      final List<ErrorDetail> errors =
+          violations.stream()
+              .map(
+                  violation ->
+                      new ErrorDetail(
+                          violation.getPropertyPath().toString(),
+                          violation.getMessage(),
+                          violation.getInvalidValue()))
+              .toList();
+
+      final String firstErrorMessage = errors.get(0).errorMessage();
+
+      throw new DomainException(firstErrorMessage, "domain_exception", errors);
+    }
   }
 }

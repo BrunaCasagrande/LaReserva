@@ -1,11 +1,23 @@
 package com.api.lareserva.application.domain;
 
+import com.api.lareserva.application.domain.exception.DomainException;
+import com.api.lareserva.application.domain.exception.ErrorDetail;
 import com.api.lareserva.application.dto.RestaurantDto;
 import com.api.lareserva.application.dto.UserDto;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import jakarta.validation.constraints.NotNull;
+import java.sql.Date;
 import java.time.LocalTime;
-import java.util.Date;
-import lombok.*;
+import java.util.List;
+import java.util.Set;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -22,7 +34,7 @@ public class Reservation {
   @NotNull(message = "Reservation Time is required")
   private LocalTime reservationTime;
 
-  @NotNull(message = "Number of Peoples is required")
+  @NotNull(message = "Number of People is required")
   private Integer numberOfPeople;
 
   @NotNull(message = "Restaurant is required")
@@ -37,11 +49,40 @@ public class Reservation {
       final Integer numberOfPeople,
       final RestaurantDto restaurant,
       final UserDto user) {
-    return Reservation.builder()
-        .reservationDate(reservationDate)
-        .reservationTime(reservationTime)
-        .restaurant(restaurant)
-        .user(user)
-        .build();
+
+    final var reservation =
+        Reservation.builder()
+            .reservationDate(reservationDate)
+            .reservationTime(reservationTime)
+            .numberOfPeople(numberOfPeople)
+            .restaurant(restaurant)
+            .user(user)
+            .build();
+
+    validate(reservation);
+
+    return reservation;
+  }
+
+  private static void validate(final Reservation reservation) {
+    final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+    final Validator validator = factory.getValidator();
+    final Set<ConstraintViolation<Reservation>> violations = validator.validate(reservation);
+
+    if (!violations.isEmpty()) {
+      final List<ErrorDetail> errors =
+          violations.stream()
+              .map(
+                  violation ->
+                      new ErrorDetail(
+                          violation.getPropertyPath().toString(),
+                          violation.getMessage(),
+                          violation.getInvalidValue()))
+              .toList();
+
+      final String firstErrorMessage = errors.get(0).errorMessage();
+
+      throw new DomainException(firstErrorMessage, "domain_exception", errors);
+    }
   }
 }

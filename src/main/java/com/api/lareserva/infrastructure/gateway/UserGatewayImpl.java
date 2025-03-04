@@ -1,8 +1,10 @@
 package com.api.lareserva.infrastructure.gateway;
 
+import static java.lang.String.format;
+
 import com.api.lareserva.application.domain.User;
 import com.api.lareserva.application.gateway.UserGateway;
-import com.api.lareserva.application.usecase.exception.UserNotFoundException;
+import com.api.lareserva.infrastructure.gateway.exception.GatewayException;
 import com.api.lareserva.infrastructure.persistence.entity.UserEntity;
 import com.api.lareserva.infrastructure.persistence.repository.UserRepository;
 import java.util.Optional;
@@ -12,6 +14,8 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class UserGatewayImpl implements UserGateway {
+
+  private static final String FIND_ERROR_MESSAGE = "User with id=[%s] not found.";
 
   private final UserRepository userRepository;
 
@@ -40,18 +44,19 @@ public class UserGatewayImpl implements UserGateway {
 
   @Override
   public User update(final User user) {
-    final var entity =
-        userRepository
-            .findById(user.getId())
-            .orElseThrow(() -> new UserNotFoundException(user.getId()));
+    try {
+      final var entity = userRepository.findById(user.getId()).orElseThrow();
 
-    entity.setPhoneNumber(user.getPhoneNumber());
-    entity.setEmail(user.getEmail());
-    entity.setPassword(user.getPassword());
+      entity.setPhoneNumber(user.getPhoneNumber());
+      entity.setEmail(user.getEmail());
+      entity.setPassword(user.getPassword());
 
-    final var updatedEntity = userRepository.save(entity);
+      final var updatedEntity = userRepository.save(entity);
 
-    return this.toResponse(updatedEntity);
+      return this.toResponse(updatedEntity);
+    } catch (IllegalArgumentException e) {
+      throw new GatewayException(format(FIND_ERROR_MESSAGE, user.getId()));
+    }
   }
 
   @Override
