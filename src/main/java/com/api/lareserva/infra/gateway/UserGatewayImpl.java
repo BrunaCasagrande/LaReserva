@@ -76,4 +76,9 @@ public class UserGatewayImpl implements UserGateway {
         .email(entity.getEmail())
         .build();
   }
+
+  @Override
+  public Optional<User> findById(final int id) {
+    return userRepository.findById(id).map(this::toResponse);
+  }
 }
