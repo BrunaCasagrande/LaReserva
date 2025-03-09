@@ -11,7 +11,5 @@ public interface UserGateway {
 
   User update(final User user);
 
-  void deleteById(final int id);
-
-  Optional<User> findById(final int id);
+  void deleteByCpf(final String cpf);
 }

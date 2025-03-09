@@ -1,10 +1,9 @@
 package com.api.lareserva.core.usecase;
 
-import static com.api.lareserva.core.usecase.fixture.UserUseCaseFixture.NONEXISTENT_CPF;
-import static com.api.lareserva.core.usecase.fixture.UserUseCaseFixture.validUserDomain;
+import static com.api.lareserva.core.usecase.fixture.SearchUserTestFixture.NONEXISTENT_CPF;
+import static com.api.lareserva.core.usecase.fixture.SearchUserTestFixture.validUserDomain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -18,11 +17,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class SearchUserByCpfTest {
+class SearchUserTest {
 
   @Mock private UserGateway userGateway;
 
-  @InjectMocks private SearchUserByCpf searchUserByCpf;
+  @InjectMocks private SearchUser searchUser;
 
   @Test
   void shouldFindUserSuccessfullyByCpf() {
@@ -30,7 +29,7 @@ class SearchUserByCpfTest {
     final var user = validUserDomain();
     when(userGateway.findByCpf(user.getCpf())).thenReturn(Optional.of(user));
 
-    final var result = searchUserByCpf.execute(user.getCpf());
+    final var result = searchUser.execute(user.getCpf());
 
     assertThat(result).usingRecursiveComparison().isEqualTo(user);
     verify(userGateway).findByCpf(user.getCpf());
@@ -41,7 +40,7 @@ class SearchUserByCpfTest {
 
     when(userGateway.findByCpf(NONEXISTENT_CPF)).thenReturn(Optional.empty());
 
-    assertThatThrownBy(() -> searchUserByCpf.execute(NONEXISTENT_CPF))
+    assertThatThrownBy(() -> searchUser.execute(NONEXISTENT_CPF))
         .isInstanceOf(UserNotFoundException.class)
         .hasMessage("User with cpf=[99999999999] not found.");
 

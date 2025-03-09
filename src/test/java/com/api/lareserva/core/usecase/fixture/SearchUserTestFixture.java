@@ -2,7 +2,7 @@ package com.api.lareserva.core.usecase.fixture;
 
 import com.api.lareserva.core.domain.User;
 
-public class UserUseCaseFixture {
+public class SearchUserTestFixture {
   public static final String NONEXISTENT_CPF = "99999999999";
 
   public static User validUserDomain() {

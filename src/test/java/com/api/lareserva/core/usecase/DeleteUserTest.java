@@ -1,6 +1,6 @@
 package com.api.lareserva.core.usecase;
 
-import static com.api.lareserva.core.usecase.fixture.DeleteUserTestFixture.EXISTING_ID;
+import static com.api.lareserva.core.usecase.fixture.DeleteUserTestFixture.EXISTING_CPF;
 import static com.api.lareserva.core.usecase.fixture.DeleteUserTestFixture.existingUser;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -17,23 +17,23 @@ class DeleteUserTest {
 
   @Test
   void shouldDeleteUserSuccessfully() {
-    when(userGateway.findById(EXISTING_ID)).thenReturn(Optional.of(existingUser()));
+    when(userGateway.findByCpf(EXISTING_CPF)).thenReturn(Optional.of(existingUser()));
 
-    deleteUser.execute(EXISTING_ID);
+    deleteUser.execute(EXISTING_CPF);
 
-    verify(userGateway).findById(EXISTING_ID);
-    verify(userGateway).deleteById(EXISTING_ID);
+    verify(userGateway).findByCpf(EXISTING_CPF);
+    verify(userGateway).deleteByCpf(EXISTING_CPF);
   }
 
   @Test
   void shouldThrowExceptionWhenUserDoesNotExist() {
-    when(userGateway.findById(EXISTING_ID)).thenReturn(Optional.empty());
+    when(userGateway.findByCpf(EXISTING_CPF)).thenReturn(Optional.empty());
 
-    org.assertj.core.api.Assertions.assertThatThrownBy(() -> deleteUser.execute(EXISTING_ID))
+    org.assertj.core.api.Assertions.assertThatThrownBy(() -> deleteUser.execute(EXISTING_CPF))
         .isInstanceOf(UserNotFoundException.class)
-        .hasMessage("User with id=[1] not found.");
+        .hasMessage("User with CPF=[12345678900] not found.");
 
-    verify(userGateway).findById(EXISTING_ID);
-    verify(userGateway, never()).deleteById(anyInt());
+    verify(userGateway).findByCpf(EXISTING_CPF);
+    verify(userGateway, never()).deleteByCpf(anyString());
   }
 }

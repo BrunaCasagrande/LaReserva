@@ -11,12 +11,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.api.lareserva.core.domain.User;
 import com.api.lareserva.core.usecase.CreateUser;
 import com.api.lareserva.core.usecase.DeleteUser;
-import com.api.lareserva.core.usecase.SearchUserByCpf;
+import com.api.lareserva.core.usecase.SearchUser;
 import com.api.lareserva.core.usecase.UpdateUser;
 import com.api.lareserva.core.usecase.exception.UserAlreadyExistsException;
 import com.api.lareserva.core.usecase.exception.UserNotFoundException;
-import com.api.lareserva.infra.controller.fixture.UserControllerTestFixture;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ class UserControllerTest {
   @Autowired private ObjectMapper objectMapper;
 
   @MockBean private CreateUser createUser;
-  @MockBean private SearchUserByCpf searchUserByCpf;
+  @MockBean private SearchUser searchUser;
   @MockBean private UpdateUser updateUser;
   @MockBean private DeleteUser deleteUser;
 
@@ -53,11 +53,11 @@ class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isCreated())
-        .andExpect(jsonPath("$.id").value(createResponse.getId()))
-        .andExpect(jsonPath("$.name").value(createResponse.getName()))
         .andExpect(jsonPath("$.cpf").value(createResponse.getCpf()))
+        .andExpect(jsonPath("$.name").value(createResponse.getName()))
         .andExpect(jsonPath("$.phoneNumber").value(createResponse.getPhoneNumber()))
         .andExpect(jsonPath("$.email").value(createResponse.getEmail()));
+
     final ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
     verify(createUser).execute(userCaptor.capture());
 
@@ -66,7 +66,6 @@ class UserControllerTest {
 
   @Test
   void shouldThrowAnExceptionWhenCpfAlreadyExists() throws Exception {
-
     final var request = validRequest();
 
     when(createUser.execute(any(User.class)))
@@ -83,55 +82,48 @@ class UserControllerTest {
 
   @Test
   void shouldFindUserByCpfSuccessfully() throws Exception {
-
-    final var cpf = UserControllerTestFixture.CPF;
     final var response = validResponse();
 
-    when(searchUserByCpf.execute(cpf)).thenReturn(response);
+    when(searchUser.execute(CPF)).thenReturn(Optional.of(response));
 
     mockMvc
-        .perform(get(BASE_URL + "/{cpf}", cpf).contentType(MediaType.APPLICATION_JSON))
+        .perform(get(BASE_URL + "/{cpf}", CPF).contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.id").value(response.getId()))
-        .andExpect(jsonPath("$.name").value(response.getName()))
         .andExpect(jsonPath("$.cpf").value(response.getCpf()))
+        .andExpect(jsonPath("$.name").value(response.getName()))
         .andExpect(jsonPath("$.phoneNumber").value(response.getPhoneNumber()))
         .andExpect(jsonPath("$.email").value(response.getEmail()));
 
-    verify(searchUserByCpf).execute(cpf);
+    verify(searchUser).execute(CPF);
   }
 
   @Test
   void shouldReturnNotFoundWhenUserDoesNotExist() throws Exception {
-
-    final var cpf = UserControllerTestFixture.CPF;
-
-    when(searchUserByCpf.execute(cpf)).thenThrow(new UserNotFoundException(cpf));
+    when(searchUser.execute(CPF)).thenThrow(new UserNotFoundException(CPF));
 
     mockMvc
-        .perform(get(BASE_URL + "/{cpf}", cpf).contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.message").value("User with cpf=[12345678900] not found."));
+        .perform(get(BASE_URL + "/{cpf}", CPF).contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isNotFound())
+        .andExpect(jsonPath("$.message").value("User with CPF=[12345678900] not found."));
 
-    verify(searchUserByCpf).execute(cpf);
+    verify(searchUser).execute(CPF);
   }
 
   @Test
   void shouldUpdateUserSuccessfully() throws Exception {
-    final var request = validRequest();
-    final var response = validResponse();
+    final var request = updatedRequest();
+    final var response = updatedResponse();
 
     when(updateUser.execute(any(User.class))).thenReturn(response);
 
     mockMvc
         .perform(
-            put(BASE_URL + "/{id}", response.getId())
+            put(BASE_URL + "/{cpf}", CPF)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.id").value(response.getId()))
-        .andExpect(jsonPath("$.name").value(response.getName()))
         .andExpect(jsonPath("$.cpf").value(response.getCpf()))
+        .andExpect(jsonPath("$.name").value(response.getName()))
         .andExpect(jsonPath("$.phoneNumber").value(response.getPhoneNumber()))
         .andExpect(jsonPath("$.email").value(response.getEmail()));
 
@@ -140,39 +132,39 @@ class UserControllerTest {
 
   @Test
   void shouldThrowExceptionWhenUpdatingNonExistentUser() throws Exception {
-    final var request = validRequestWithId();
+    final var request = updatedRequest();
 
-    when(updateUser.execute(any(User.class))).thenThrow(new UserNotFoundException(request.getId()));
+    when(updateUser.execute(any(User.class))).thenThrow(new UserNotFoundException(CPF));
 
     mockMvc
         .perform(
-            put(BASE_URL + "/{id}", request.getId())
+            put(BASE_URL + "/{cpf}", CPF)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-        .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.message").value("User with id=[1] not found."));
+        .andExpect(status().isNotFound())
+        .andExpect(jsonPath("$.message").value("User with CPF=[12345678900] not found."));
 
     verify(updateUser).execute(any(User.class));
   }
 
   @Test
   void shouldDeleteUserSuccessfully() throws Exception {
-    doNothing().when(deleteUser).execute(ID);
+    doNothing().when(deleteUser).execute(CPF);
 
-    mockMvc.perform(delete(BASE_URL + "/{id}", ID)).andExpect(status().isNoContent());
+    mockMvc.perform(delete(BASE_URL + "/{cpf}", CPF)).andExpect(status().isNoContent());
 
-    verify(deleteUser).execute(ID);
+    verify(deleteUser).execute(CPF);
   }
 
   @Test
   void shouldReturnNotFoundWhenDeletingNonExistentUser() throws Exception {
-    doThrow(new UserNotFoundException(ID)).when(deleteUser).execute(ID);
+    doThrow(new UserNotFoundException(CPF)).when(deleteUser).execute(CPF);
 
     mockMvc
-        .perform(delete(BASE_URL + "/{id}", ID))
-        .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.message").value("User with id=[1] not found."));
+        .perform(delete(BASE_URL + "/{cpf}", CPF))
+        .andExpect(status().isNotFound())
+        .andExpect(jsonPath("$.message").value("User with CPF=[12345678900] not found."));
 
-    verify(deleteUser).execute(ID);
+    verify(deleteUser).execute(CPF);
   }
 }

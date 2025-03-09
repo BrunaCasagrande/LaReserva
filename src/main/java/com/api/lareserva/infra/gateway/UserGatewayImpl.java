@@ -8,21 +8,22 @@ import com.api.lareserva.infra.gateway.exception.GatewayException;
 import com.api.lareserva.infra.persistence.entity.UserEntity;
 import com.api.lareserva.infra.persistence.repository.UserRepository;
 import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
 public class UserGatewayImpl implements UserGateway {
 
-  private static final String FIND_ERROR_MESSAGE = "User with id=[%s] not found.";
+  private static final String FIND_ERROR_MESSAGE = "User with CPF=[%s] not found.";
 
   private final UserRepository userRepository;
 
   @Override
   public User save(final User user) {
-    final var entity =
-        UserEntity.builder()
+    final var entity = UserEntity.builder()
             .name(user.getName())
             .cpf(user.getCpf())
             .phoneNumber(user.getPhoneNumber())
@@ -32,8 +33,16 @@ public class UserGatewayImpl implements UserGateway {
 
     final var saved = userRepository.save(entity);
 
-    return this.toResponse(saved);
+    return User.builder()
+            .id(saved.getId())
+            .name(saved.getName())
+            .cpf(saved.getCpf())
+            .phoneNumber(saved.getPhoneNumber())
+            .email(saved.getEmail())
+            .password(saved.getPassword())
+            .build();
   }
+
 
   @Override
   public Optional<User> findByCpf(final String cpf) {
@@ -47,8 +56,8 @@ public class UserGatewayImpl implements UserGateway {
     try {
       final var entity =
           userRepository
-              .findById(user.getId())
-              .orElseThrow(() -> new GatewayException(format(FIND_ERROR_MESSAGE, user.getId())));
+              .findByCpf(user.getCpf())
+              .orElseThrow(() -> new GatewayException(format(FIND_ERROR_MESSAGE, user.getCpf())));
 
       entity.setPhoneNumber(user.getPhoneNumber());
       entity.setEmail(user.getEmail());
@@ -58,13 +67,13 @@ public class UserGatewayImpl implements UserGateway {
 
       return this.toResponse(updatedEntity);
     } catch (IllegalArgumentException e) {
-      throw new GatewayException(format(FIND_ERROR_MESSAGE, user.getId()));
+      throw new GatewayException(format(FIND_ERROR_MESSAGE, user.getCpf()));
     }
   }
 
   @Override
-  public void deleteById(final int id) {
-    userRepository.deleteById(id);
+  public void deleteByCpf(final String cpf) {
+    userRepository.deleteByCpf(cpf);
   }
 
   private User toResponse(final UserEntity entity) {
@@ -74,11 +83,7 @@ public class UserGatewayImpl implements UserGateway {
         .cpf(entity.getCpf())
         .phoneNumber(entity.getPhoneNumber())
         .email(entity.getEmail())
+        .password(entity.getPassword())
         .build();
-  }
-
-  @Override
-  public Optional<User> findById(final int id) {
-    return userRepository.findById(id).map(this::toResponse);
   }
 }

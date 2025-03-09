@@ -11,9 +11,8 @@ public class DeleteUser {
 
   private final UserGateway userGateway;
 
-  public void execute(final int id) {
-    userGateway.findById(id).orElseThrow(() -> new UserNotFoundException(id));
-
-    userGateway.deleteById(id);
+  public void execute(final String cpf) {
+    userGateway.findByCpf(cpf).orElseThrow(() -> new UserNotFoundException(cpf));
+    userGateway.deleteByCpf(cpf);
   }
 }

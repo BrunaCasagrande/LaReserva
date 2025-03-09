@@ -19,7 +19,6 @@ class UserGatewayImplTest {
 
   @Test
   void shouldSaveUserSuccessfully() {
-
     final var entity = userEntity();
     final ArgumentCaptor<UserEntity> captor = ArgumentCaptor.forClass(UserEntity.class);
     final var domain = userDomain();
@@ -29,9 +28,8 @@ class UserGatewayImplTest {
     final var response = userGateway.save(domain);
 
     final var captured = captor.getValue();
-    assertThat(response.getId()).isEqualTo(entity.getId());
+    assertThat(response.getCpf()).isEqualTo(entity.getCpf());
     assertThat(response.getName()).isEqualTo(captured.getName());
-    assertThat(response.getCpf()).isEqualTo(captured.getCpf());
     assertThat(response.getPhoneNumber()).isEqualTo(captured.getPhoneNumber());
     assertThat(response.getEmail()).isEqualTo(captured.getEmail());
 
@@ -40,7 +38,6 @@ class UserGatewayImplTest {
 
   @Test
   void shouldFindUserByCpfSuccessfully() {
-
     final var entity = userEntity();
     when(userRepository.findByCpf(entity.getCpf())).thenReturn(Optional.of(entity));
 
@@ -50,9 +47,8 @@ class UserGatewayImplTest {
     assertThat(response)
         .hasValueSatisfying(
             user -> {
-              assertThat(user.getId()).isEqualTo(entity.getId());
-              assertThat(user.getName()).isEqualTo(entity.getName());
               assertThat(user.getCpf()).isEqualTo(entity.getCpf());
+              assertThat(user.getName()).isEqualTo(entity.getName());
               assertThat(user.getPhoneNumber()).isEqualTo(entity.getPhoneNumber());
               assertThat(user.getEmail()).isEqualTo(entity.getEmail());
             });
@@ -66,7 +62,7 @@ class UserGatewayImplTest {
     final var updatedDomain = updatedUserDomain();
     final var updatedEntity = updatedUserEntity();
 
-    when(userRepository.findById(existingEntity.getId())).thenReturn(Optional.of(existingEntity));
+    when(userRepository.findByCpf(existingEntity.getCpf())).thenReturn(Optional.of(existingEntity));
     when(userRepository.save(any(UserEntity.class))).thenReturn(updatedEntity);
 
     final var response = userGateway.update(updatedDomain);
@@ -74,31 +70,31 @@ class UserGatewayImplTest {
     assertThat(response.getPhoneNumber()).isEqualTo(UPDATED_PHONE_NUMBER);
     assertThat(response.getEmail()).isEqualTo(UPDATED_EMAIL);
 
-    verify(userRepository).findById(existingEntity.getId());
+    verify(userRepository).findByCpf(existingEntity.getCpf());
     verify(userRepository).save(any(UserEntity.class));
   }
 
   @Test
   void shouldThrowAnExceptionWhenUpdatingNonExistentUser() {
-
     final var nonExistentUser = nonExistentUserDomain();
 
-    when(userRepository.findById(NONEXISTENT_ID)).thenReturn(Optional.empty());
+    when(userRepository.findByCpf(NONEXISTENT_CPF)).thenReturn(Optional.empty());
 
     assertThatThrownBy(() -> userGateway.update(nonExistentUser))
         .isInstanceOf(GatewayException.class)
-        .hasMessage("User with id=[99] not found.");
+        .hasMessage("User with CPF=[99999999999] not found.");
 
-    verify(userRepository).findById(NONEXISTENT_ID);
+    verify(userRepository).findByCpf(NONEXISTENT_CPF);
     verify(userRepository, never()).save(any());
   }
 
   @Test
   void shouldDeleteUserSuccessfully() {
+    when(userRepository.findByCpf(CPF)).thenReturn(Optional.of(userEntity()));
 
-    userGateway.deleteById(1);
+    userGateway.deleteByCpf(CPF);
 
-    verify(userRepository).deleteById(1);
+    verify(userRepository).deleteByCpf(CPF);
   }
 
   @Test
