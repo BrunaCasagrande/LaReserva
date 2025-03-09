@@ -20,34 +20,39 @@ class UpdateUserTest {
 
   @Test
   void shouldUpdateUserSuccessfully() {
-
     final var existingUser = existingUser();
-    final var updatedUser = updatedUser();
+    final var updateRequest = updateUserRequest();
+    final var expectedUpdatedUser =
+        User.builder()
+            .cpf(existingUser.getCpf())
+            .name(updateRequest.getName())
+            .phoneNumber(updateRequest.getPhoneNumber())
+            .email(updateRequest.getEmail())
+            .password(updateRequest.getPassword())
+            .build();
 
     when(userGateway.findByCpf(EXISTING_CPF)).thenReturn(Optional.of(existingUser));
-    when(userGateway.update(any(User.class))).thenReturn(updatedUser);
+    when(userGateway.update(any(User.class))).thenReturn(expectedUpdatedUser);
 
-    final var result = updateUser.execute(updatedUser);
+    final var result = updateUser.execute(EXISTING_CPF, updateRequest);
 
-    assertThat(result).usingRecursiveComparison().isEqualTo(updatedUser);
+    assertThat(result).usingRecursiveComparison().isEqualTo(expectedUpdatedUser);
 
     verify(userGateway).findByCpf(EXISTING_CPF);
     final ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
     verify(userGateway).update(captor.capture());
-    assertThat(captor.getValue()).usingRecursiveComparison().isEqualTo(updatedUser);
+    assertThat(captor.getValue()).usingRecursiveComparison().isEqualTo(expectedUpdatedUser);
   }
 
   @Test
   void shouldThrowExceptionWhenUserNotFound() {
-
-    final var nonExistentUser = nonExistentUser();
+    final var updateRequest = updateUserRequest();
 
     when(userGateway.findByCpf(NONEXISTENT_CPF)).thenReturn(Optional.empty());
 
-    assertThatThrownBy(() -> updateUser.execute(nonExistentUser))
+    assertThatThrownBy(() -> updateUser.execute(NONEXISTENT_CPF, updateRequest))
         .isInstanceOf(UserNotFoundException.class)
-        .hasMessage(
-            "User with CPF=[12345678900] not found."); // Ajuste a mensagem conforme necessário
+        .hasMessage("User with CPF=[" + NONEXISTENT_CPF + "] not found.");
 
     verify(userGateway).findByCpf(NONEXISTENT_CPF);
     verify(userGateway, never()).update(any());

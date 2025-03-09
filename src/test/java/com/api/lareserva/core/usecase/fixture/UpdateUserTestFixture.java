@@ -1,6 +1,7 @@
 package com.api.lareserva.core.usecase.fixture;
 
 import com.api.lareserva.core.domain.User;
+import com.api.lareserva.entrypoint.controller.request.UpdateUserRequest;
 
 public class UpdateUserTestFixture {
 
@@ -35,5 +36,14 @@ public class UpdateUserTestFixture {
         .email("inexistente@email.com")
         .password("SenhaInvalida!")
         .build();
+  }
+
+  public static UpdateUserRequest updateUserRequest() {
+    UpdateUserRequest request = new UpdateUserRequest();
+    request.setName("Updated Name");
+    request.setPhoneNumber("11999999999");
+    request.setEmail("updated@email.com");
+    request.setPassword("newPassword123");
+    return request;
   }
 }

@@ -5,6 +5,7 @@ import com.api.lareserva.core.usecase.CreateUser;
 import com.api.lareserva.core.usecase.DeleteUser;
 import com.api.lareserva.core.usecase.SearchUser;
 import com.api.lareserva.core.usecase.UpdateUser;
+import com.api.lareserva.entrypoint.controller.request.UpdateUserRequest;
 import com.api.lareserva.presenter.UserPresenter;
 import com.api.lareserva.presenter.response.UserPresenterResponse;
 import jakarta.validation.Valid;
@@ -49,10 +50,9 @@ public class UserController {
 
   @PutMapping("/{cpf}")
   public ResponseEntity<UserPresenterResponse> update(
-      @PathVariable final String cpf, @Valid @RequestBody final User request) {
+      @PathVariable final String cpf, @Valid @RequestBody final UpdateUserRequest request) {
 
-    request.setCpf(cpf);
-    final var updatedUser = this.updateUser.execute(request);
+    final var updatedUser = this.updateUser.execute(cpf, request);
 
     return ResponseEntity.ok(userPresenter.parseToResponse(updatedUser));
   }

@@ -16,6 +16,7 @@ public class UserControllerTestFixture {
 
   public static User validRequest() {
     return User.builder()
+        .id(1)
         .cpf(CPF)
         .name(NAME)
         .phoneNumber(PHONE_NUMBER)
@@ -30,6 +31,7 @@ public class UserControllerTestFixture {
 
   public static User updatedRequest() {
     return User.builder()
+        .id(1)
         .cpf(CPF)
         .name(NAME)
         .phoneNumber(UPDATED_PHONE_NUMBER)

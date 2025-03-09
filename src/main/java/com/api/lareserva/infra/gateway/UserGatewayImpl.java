@@ -8,9 +8,7 @@ import com.api.lareserva.infra.gateway.exception.GatewayException;
 import com.api.lareserva.infra.persistence.entity.UserEntity;
 import com.api.lareserva.infra.persistence.repository.UserRepository;
 import java.util.Optional;
-
 import lombok.RequiredArgsConstructor;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -23,7 +21,8 @@ public class UserGatewayImpl implements UserGateway {
 
   @Override
   public User save(final User user) {
-    final var entity = UserEntity.builder()
+    final var entity =
+        UserEntity.builder()
             .name(user.getName())
             .cpf(user.getCpf())
             .phoneNumber(user.getPhoneNumber())
@@ -33,16 +32,8 @@ public class UserGatewayImpl implements UserGateway {
 
     final var saved = userRepository.save(entity);
 
-    return User.builder()
-            .id(saved.getId())
-            .name(saved.getName())
-            .cpf(saved.getCpf())
-            .phoneNumber(saved.getPhoneNumber())
-            .email(saved.getEmail())
-            .password(saved.getPassword())
-            .build();
+    return this.toResponse(saved);
   }
-
 
   @Override
   public Optional<User> findByCpf(final String cpf) {
@@ -83,7 +74,6 @@ public class UserGatewayImpl implements UserGateway {
         .cpf(entity.getCpf())
         .phoneNumber(entity.getPhoneNumber())
         .email(entity.getEmail())
-        .password(entity.getPassword())
         .build();
   }
 }

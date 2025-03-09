@@ -15,6 +15,7 @@ import com.api.lareserva.core.usecase.SearchUser;
 import com.api.lareserva.core.usecase.UpdateUser;
 import com.api.lareserva.core.usecase.exception.UserAlreadyExistsException;
 import com.api.lareserva.core.usecase.exception.UserNotFoundException;
+import com.api.lareserva.entrypoint.controller.request.UpdateUserRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -53,6 +54,7 @@ class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
         .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.id").value(createResponse.getId()))
         .andExpect(jsonPath("$.cpf").value(createResponse.getCpf()))
         .andExpect(jsonPath("$.name").value(createResponse.getName()))
         .andExpect(jsonPath("$.phoneNumber").value(createResponse.getPhoneNumber()))
@@ -103,7 +105,7 @@ class UserControllerTest {
 
     mockMvc
         .perform(get(BASE_URL + "/{cpf}", CPF).contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isNotFound())
+        .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.message").value("User with CPF=[12345678900] not found."));
 
     verify(searchUser).execute(CPF);
@@ -114,7 +116,7 @@ class UserControllerTest {
     final var request = updatedRequest();
     final var response = updatedResponse();
 
-    when(updateUser.execute(any(User.class))).thenReturn(response);
+    when(updateUser.execute(eq(CPF), any(UpdateUserRequest.class))).thenReturn(response);
 
     mockMvc
         .perform(
@@ -127,24 +129,25 @@ class UserControllerTest {
         .andExpect(jsonPath("$.phoneNumber").value(response.getPhoneNumber()))
         .andExpect(jsonPath("$.email").value(response.getEmail()));
 
-    verify(updateUser).execute(any(User.class));
+    verify(updateUser).execute(eq(CPF), any(UpdateUserRequest.class));
   }
 
   @Test
   void shouldThrowExceptionWhenUpdatingNonExistentUser() throws Exception {
     final var request = updatedRequest();
 
-    when(updateUser.execute(any(User.class))).thenThrow(new UserNotFoundException(CPF));
+    when(updateUser.execute(eq(CPF), any(UpdateUserRequest.class)))
+        .thenThrow(new UserNotFoundException(CPF));
 
     mockMvc
         .perform(
             put(BASE_URL + "/{cpf}", CPF)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
-        .andExpect(status().isNotFound())
+        .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.message").value("User with CPF=[12345678900] not found."));
 
-    verify(updateUser).execute(any(User.class));
+    verify(updateUser).execute(eq(CPF), any(UpdateUserRequest.class));
   }
 
   @Test
@@ -162,7 +165,7 @@ class UserControllerTest {
 
     mockMvc
         .perform(delete(BASE_URL + "/{cpf}", CPF))
-        .andExpect(status().isNotFound())
+        .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.message").value("User with CPF=[12345678900] not found."));
 
     verify(deleteUser).execute(CPF);
