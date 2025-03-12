@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class UserGatewayImpl implements UserGateway {
 
-  private static final String FIND_ERROR_MESSAGE = "User with id=[%s] not found.";
+  private static final String FIND_ERROR_MESSAGE = "User with CPF=[%s] not found.";
 
   private final UserRepository userRepository;
 
@@ -47,8 +47,8 @@ public class UserGatewayImpl implements UserGateway {
     try {
       final var entity =
           userRepository
-              .findById(user.getId())
-              .orElseThrow(() -> new GatewayException(format(FIND_ERROR_MESSAGE, user.getId())));
+              .findByCpf(user.getCpf())
+              .orElseThrow(() -> new GatewayException(format(FIND_ERROR_MESSAGE, user.getCpf())));
 
       entity.setPhoneNumber(user.getPhoneNumber());
       entity.setEmail(user.getEmail());
@@ -58,13 +58,13 @@ public class UserGatewayImpl implements UserGateway {
 
       return this.toResponse(updatedEntity);
     } catch (IllegalArgumentException e) {
-      throw new GatewayException(format(FIND_ERROR_MESSAGE, user.getId()));
+      throw new GatewayException(format(FIND_ERROR_MESSAGE, user.getCpf()));
     }
   }
 
   @Override
-  public void deleteById(final int id) {
-    userRepository.deleteById(id);
+  public void deleteByCpf(final String cpf) {
+    userRepository.deleteByCpf(cpf);
   }
 
   private User toResponse(final UserEntity entity) {

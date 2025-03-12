@@ -13,14 +13,12 @@ public class UserGatewayImplTestFixture {
   public static final String UPDATED_PHONE_NUMBER = "11999999999";
   public static final String UPDATED_EMAIL = "new@email.com";
   public static final String UPDATED_PASSWORD = "NewPassword123!";
-  public static final Integer NONEXISTENT_ID = 99;
   public static final String NONEXISTENT_CPF = "99999999999";
 
   public static UserEntity userEntity() {
     return UserEntity.builder()
-        .id(1)
-        .name(NAME)
         .cpf(CPF)
+        .name(NAME)
         .phoneNumber(PHONE_NUMBER)
         .email(EMAIL)
         .password(PASSWORD)
@@ -29,9 +27,8 @@ public class UserGatewayImplTestFixture {
 
   public static User userDomain() {
     return User.builder()
-        .id(1)
-        .name(NAME)
         .cpf(CPF)
+        .name(NAME)
         .phoneNumber(PHONE_NUMBER)
         .email(EMAIL)
         .password(PASSWORD)
@@ -40,9 +37,8 @@ public class UserGatewayImplTestFixture {
 
   public static UserEntity updatedUserEntity() {
     return UserEntity.builder()
-        .id(1)
-        .name(NAME)
         .cpf(CPF)
+        .name(NAME)
         .phoneNumber(UPDATED_PHONE_NUMBER)
         .email(UPDATED_EMAIL)
         .password(UPDATED_PASSWORD)
@@ -51,9 +47,8 @@ public class UserGatewayImplTestFixture {
 
   public static User updatedUserDomain() {
     return User.builder()
-        .id(1)
-        .name(NAME)
         .cpf(CPF)
+        .name(NAME)
         .phoneNumber(UPDATED_PHONE_NUMBER)
         .email(UPDATED_EMAIL)
         .password(UPDATED_PASSWORD)
@@ -62,9 +57,8 @@ public class UserGatewayImplTestFixture {
 
   public static User nonExistentUserDomain() {
     return User.builder()
-        .id(99)
+        .cpf(NONEXISTENT_CPF)
         .name("Nonexistent User")
-        .cpf("99999999999")
         .phoneNumber("11999999999")
         .email("nonexistent@email.com")
         .password("StrongPassword123!")
