@@ -6,9 +6,8 @@ import lombok.Builder;
 
 @Builder
 public record ReservationPresenterResponse(
-        int id,
-        Date reservationDate,
-        LocalTime reservationTime,
-        int numberOfPeople,
-        UserPresenterResponse user
-) {}
+    int id,
+    Date reservationDate,
+    LocalTime reservationTime,
+    int numberOfPeople,
+    UserPresenterResponse user) {}

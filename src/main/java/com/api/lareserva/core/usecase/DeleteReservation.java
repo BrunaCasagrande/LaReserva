@@ -9,12 +9,11 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class DeleteReservation {
 
-    private final ReservationGateway reservationGateway;
+  private final ReservationGateway reservationGateway;
 
-    public void execute(final Integer id) {
-        reservationGateway.findById(id)
-                .orElseThrow(() -> new ReservationNotFoundException(id));
+  public void execute(final Integer id) {
+    reservationGateway.findById(id).orElseThrow(() -> new ReservationNotFoundException(id));
 
-        reservationGateway.deleteById(id);
-    }
+    reservationGateway.deleteById(id);
+  }
 }

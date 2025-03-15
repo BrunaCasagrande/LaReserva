@@ -20,45 +20,48 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RequestMapping("/lareserva/reservation")
 public class ReservationController {
 
-    private final CreateReservation createReservation;
-    private final DeleteReservation deleteReservation;
-    private final SearchReservation searchReservation;
-    private final UpdateReservation updateReservation;
+  private final CreateReservation createReservation;
+  private final DeleteReservation deleteReservation;
+  private final SearchReservation searchReservation;
+  private final UpdateReservation updateReservation;
 
-    private final ReservationPresenter reservationPresenter;
+  private final ReservationPresenter reservationPresenter;
 
-    @PostMapping
-    public ResponseEntity<ReservationPresenterResponse> create(@Valid @RequestBody final Reservation request) {
-        final var reservationCreated = this.createReservation.execute(request);
+  @PostMapping
+  public ResponseEntity<ReservationPresenterResponse> create(
+      @Valid @RequestBody final Reservation request) {
+    final var reservationCreated = this.createReservation.execute(request);
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(reservationCreated.getId())
-                .toUri();
+    URI location =
+        ServletUriComponentsBuilder.fromCurrentRequest()
+            .path("/{id}")
+            .buildAndExpand(reservationCreated.getId())
+            .toUri();
 
-        return ResponseEntity.created(location).body(reservationPresenter.parseToResponse(reservationCreated));
-    }
+    return ResponseEntity.created(location)
+        .body(reservationPresenter.parseToResponse(reservationCreated));
+  }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ReservationPresenterResponse> findById(@PathVariable final Integer id) {
-        return this.searchReservation
-                .execute(id)
-                .map(reservation -> ResponseEntity.ok(reservationPresenter.parseToResponse(reservation)))
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
+  @GetMapping("/{id}")
+  public ResponseEntity<ReservationPresenterResponse> findById(@PathVariable final Integer id) {
+    return this.searchReservation
+        .execute(id)
+        .map(reservation -> ResponseEntity.ok(reservationPresenter.parseToResponse(reservation)))
+        .orElseGet(() -> ResponseEntity.notFound().build());
+  }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ReservationPresenterResponse> update(
-            @PathVariable final Integer id, @Valid @RequestBody final UpdateReservationRequest request) {
+  @PutMapping("/{id}")
+  public ResponseEntity<ReservationPresenterResponse> update(
+      @PathVariable final Integer id, @Valid @RequestBody final UpdateReservationRequest request) {
 
-        final var updatedReservation = this.updateReservation.execute(id, request);
+    final var updatedReservation = this.updateReservation.execute(id, request);
 
-        return ResponseEntity.ok(reservationPresenter.parseToResponse(updatedReservation));
-    }
+    return ResponseEntity.ok(reservationPresenter.parseToResponse(updatedReservation));
+  }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable final Integer id) {
-        this.deleteReservation.execute(id);
-        return ResponseEntity.noContent().build();
-    }
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> delete(@PathVariable final Integer id) {
+    this.deleteReservation.execute(id);
+    return ResponseEntity.noContent().build();
+  }
 }

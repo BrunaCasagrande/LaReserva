@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class SearchReservation {
 
-    private final ReservationGateway reservationGateway;
+  private final ReservationGateway reservationGateway;
 
-    public Optional<Reservation> execute(final Integer id) {
-        return reservationGateway.findById(id);
-    }
+  public Optional<Reservation> execute(final Integer id) {
+    return reservationGateway.findById(id);
+  }
 }
