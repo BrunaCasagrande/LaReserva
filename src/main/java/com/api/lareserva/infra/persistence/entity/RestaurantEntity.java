@@ -11,10 +11,9 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import jdk.jshell.Snippet;
+import lombok.*;
 
 @Entity
 @Table(name = "restaurant")
@@ -22,6 +21,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class RestaurantEntity {
 
   @Id
