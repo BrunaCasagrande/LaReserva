@@ -9,7 +9,7 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 import jakarta.validation.constraints.NotNull;
-import java.sql.Date;
+import java. util. Date;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Set;
