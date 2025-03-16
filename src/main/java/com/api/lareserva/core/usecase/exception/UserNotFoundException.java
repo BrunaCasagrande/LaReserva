@@ -1,13 +1,10 @@
 package com.api.lareserva.core.usecase.exception;
 
-import static java.lang.String.format;
-
 public class UserNotFoundException extends BusinessException {
+  private static final String MESSAGE = "User with CPF=[%s] not found.";
+  private static final String ERROR_CODE = "USER_NOT_FOUND";
 
-  private static final String ERROR_CODE = "not_found";
-  private static final String MESSAGE = "User with id=[%s] not found.";
-
-  public UserNotFoundException(final int id) {
-    super(format(MESSAGE, id), ERROR_CODE);
+  public UserNotFoundException(final String cpf) {
+    super(String.format(MESSAGE, cpf), ERROR_CODE);
   }
 }
