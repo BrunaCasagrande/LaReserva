@@ -1,21 +1,28 @@
-package com.api.lareserva.infra.controller;
+package com.api.lareserva.entrypoint.controller;
 
-import static com.api.lareserva.infra.controller.fixture.UserControllerTestFixture.*;
+import static com.api.lareserva.entrypoint.controller.fixture.UserControllerTestFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.api.lareserva.core.domain.User;
+import com.api.lareserva.core.dto.UpdateUserDto;
 import com.api.lareserva.core.usecase.CreateUser;
 import com.api.lareserva.core.usecase.DeleteUser;
 import com.api.lareserva.core.usecase.SearchUser;
 import com.api.lareserva.core.usecase.UpdateUser;
 import com.api.lareserva.core.usecase.exception.UserAlreadyExistsException;
 import com.api.lareserva.core.usecase.exception.UserNotFoundException;
-import com.api.lareserva.entrypoint.controller.request.UpdateUserRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -116,7 +123,7 @@ class UserControllerTest {
     final var request = updatedRequest();
     final var response = updatedResponse();
 
-    when(updateUser.execute(eq(CPF), any(UpdateUserRequest.class))).thenReturn(response);
+    when(updateUser.execute(eq(CPF), any(UpdateUserDto.class))).thenReturn(response);
 
     mockMvc
         .perform(
@@ -129,14 +136,14 @@ class UserControllerTest {
         .andExpect(jsonPath("$.phoneNumber").value(response.getPhoneNumber()))
         .andExpect(jsonPath("$.email").value(response.getEmail()));
 
-    verify(updateUser).execute(eq(CPF), any(UpdateUserRequest.class));
+    verify(updateUser).execute(eq(CPF), any(UpdateUserDto.class));
   }
 
   @Test
   void shouldThrowExceptionWhenUpdatingNonExistentUser() throws Exception {
     final var request = updatedRequest();
 
-    when(updateUser.execute(eq(CPF), any(UpdateUserRequest.class)))
+    when(updateUser.execute(eq(CPF), any(UpdateUserDto.class)))
         .thenThrow(new UserNotFoundException(CPF));
 
     mockMvc
@@ -147,7 +154,7 @@ class UserControllerTest {
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.message").value("User with CPF=[12345678900] not found."));
 
-    verify(updateUser).execute(eq(CPF), any(UpdateUserRequest.class));
+    verify(updateUser).execute(eq(CPF), any(UpdateUserDto.class));
   }
 
   @Test

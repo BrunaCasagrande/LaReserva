@@ -1,4 +1,4 @@
-package com.api.lareserva.infra.controller.fixture;
+package com.api.lareserva.entrypoint.controller.fixture;
 
 import com.api.lareserva.core.domain.User;
 

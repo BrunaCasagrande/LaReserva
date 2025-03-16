@@ -1,11 +1,11 @@
 package com.api.lareserva.entrypoint.controller;
 
 import com.api.lareserva.core.domain.Reservation;
+import com.api.lareserva.core.dto.UpdateReservationDto;
 import com.api.lareserva.core.usecase.CreateReservation;
 import com.api.lareserva.core.usecase.DeleteReservation;
 import com.api.lareserva.core.usecase.SearchReservation;
 import com.api.lareserva.core.usecase.UpdateReservation;
-import com.api.lareserva.entrypoint.controller.request.UpdateReservationRequest;
 import com.api.lareserva.presenter.ReservationPresenter;
 import com.api.lareserva.presenter.response.ReservationPresenterResponse;
 import jakarta.validation.Valid;
@@ -52,7 +52,7 @@ public class ReservationController {
 
   @PutMapping("/{id}")
   public ResponseEntity<ReservationPresenterResponse> update(
-      @PathVariable final Integer id, @Valid @RequestBody final UpdateReservationRequest request) {
+      @PathVariable final Integer id, @Valid @RequestBody final UpdateReservationDto request) {
 
     final var updatedReservation = this.updateReservation.execute(id, request);
 

@@ -12,10 +12,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.api.lareserva.core.domain.Reservation;
+import com.api.lareserva.core.dto.UpdateReservationDto;
 import com.api.lareserva.core.gateway.ReservationGateway;
 import com.api.lareserva.core.usecase.exception.ReservationAlreadyExistsException;
 import com.api.lareserva.core.usecase.exception.ReservationNotFoundException;
-import com.api.lareserva.entrypoint.controller.request.UpdateReservationRequest;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,7 @@ class UpdateReservationTest {
   void shouldUpdateReservationSuccessfully() {
     final var existingReservation = validReservation();
     final var updatedReservationData = updatedReservation();
-    final var request = new UpdateReservationRequest();
+    final var request = new UpdateReservationDto();
     request.setReservationDate(updatedReservationData.getReservationDate());
     request.setReservationTime(updatedReservationData.getReservationTime());
     request.setNumberOfPeople(updatedReservationData.getNumberOfPeople());
@@ -65,7 +65,7 @@ class UpdateReservationTest {
 
   @Test
   void shouldThrowExceptionWhenReservationNotFound() {
-    final var request = new UpdateReservationRequest();
+    final var request = new UpdateReservationDto();
     request.setReservationDate(new java.util.Date());
     request.setReservationTime(java.time.LocalTime.of(20, 0));
 
@@ -87,15 +87,15 @@ class UpdateReservationTest {
 
     final var anotherReservationSameUser =
         Reservation.builder()
-            .id(2) // ID diferente para representar outra reserva
+            .id(2)
             .reservationDate(existingReservation.getReservationDate())
             .reservationTime(existingReservation.getReservationTime())
             .numberOfPeople(2)
             .restaurant(existingReservation.getRestaurant())
-            .user(existingReservation.getUser()) // O mesmo usuário!
+            .user(existingReservation.getUser())
             .build();
 
-    final var request = new UpdateReservationRequest();
+    final var request = new UpdateReservationDto();
     request.setReservationDate(existingReservation.getReservationDate());
     request.setReservationTime(existingReservation.getReservationTime());
 

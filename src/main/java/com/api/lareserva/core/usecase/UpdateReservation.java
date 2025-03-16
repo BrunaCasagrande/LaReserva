@@ -1,10 +1,10 @@
 package com.api.lareserva.core.usecase;
 
 import com.api.lareserva.core.domain.Reservation;
+import com.api.lareserva.core.dto.UpdateReservationDto;
 import com.api.lareserva.core.gateway.ReservationGateway;
 import com.api.lareserva.core.usecase.exception.ReservationAlreadyExistsException;
 import com.api.lareserva.core.usecase.exception.ReservationNotFoundException;
-import com.api.lareserva.entrypoint.controller.request.UpdateReservationRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +14,7 @@ public class UpdateReservation {
 
   private final ReservationGateway reservationGateway;
 
-  public Reservation execute(final Integer id, final UpdateReservationRequest request) {
+  public Reservation execute(final Integer id, final UpdateReservationDto request) {
 
     final Reservation existingReservation =
         reservationGateway.findById(id).orElseThrow(() -> new ReservationNotFoundException(id));

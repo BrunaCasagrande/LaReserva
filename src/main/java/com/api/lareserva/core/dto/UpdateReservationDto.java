@@ -1,4 +1,4 @@
-package com.api.lareserva.entrypoint.controller.request;
+package com.api.lareserva.core.dto;
 
 import java.time.LocalTime;
 import java.util.Date;
@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UpdateReservationRequest {
+public class UpdateReservationDto {
 
   private Date reservationDate;
 

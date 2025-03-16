@@ -1,13 +1,15 @@
-package com.api.lareserva.entrypoint.controller.request;
+package com.api.lareserva.core.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
-public class UpdateUserRequest {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class UpdateUserDto {
 
   @NotBlank(message = "Name is required")
   private String name;
