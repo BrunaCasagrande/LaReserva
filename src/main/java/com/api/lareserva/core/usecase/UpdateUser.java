@@ -1,9 +1,9 @@
 package com.api.lareserva.core.usecase;
 
 import com.api.lareserva.core.domain.User;
+import com.api.lareserva.core.dto.UpdateUserDto;
 import com.api.lareserva.core.gateway.UserGateway;
 import com.api.lareserva.core.usecase.exception.UserNotFoundException;
-import com.api.lareserva.entrypoint.controller.request.UpdateUserRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class UpdateUser {
   private final UserGateway userGateway;
 
-  public User execute(final String cpf, final UpdateUserRequest request) {
+  public User execute(final String cpf, final UpdateUserDto request) {
     final User existingUser =
         userGateway.findByCpf(cpf).orElseThrow(() -> new UserNotFoundException(cpf));
 

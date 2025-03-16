@@ -1,12 +1,19 @@
 package com.api.lareserva.core.usecase;
 
-import static com.api.lareserva.core.usecase.fixture.UpdateUserTestFixture.*;
+import static com.api.lareserva.core.usecase.fixture.UpdateUserTestFixture.EXISTING_CPF;
+import static com.api.lareserva.core.usecase.fixture.UpdateUserTestFixture.NONEXISTENT_CPF;
+import static com.api.lareserva.core.usecase.fixture.UpdateUserTestFixture.existingUser;
+import static com.api.lareserva.core.usecase.fixture.UpdateUserTestFixture.updateUserRequest;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.api.lareserva.core.domain.User;
+import com.api.lareserva.core.dto.UpdateUserDto;
 import com.api.lareserva.core.gateway.UserGateway;
 import com.api.lareserva.core.usecase.exception.UserNotFoundException;
 import java.util.Optional;
@@ -56,5 +63,24 @@ class UpdateUserTest {
 
     verify(userGateway).findByCpf(NONEXISTENT_CPF);
     verify(userGateway, never()).update(any());
+  }
+
+  @Test
+  void shouldUpdateUserPartially() {
+    final var existingUser = existingUser();
+    final var partialUpdateRequest = UpdateUserDto.builder().email("newemail@email.com").build();
+
+    when(userGateway.findByCpf(EXISTING_CPF)).thenReturn(Optional.of(existingUser));
+    when(userGateway.update(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+    final var result = updateUser.execute(EXISTING_CPF, partialUpdateRequest);
+
+    assertThat(result.getCpf()).isEqualTo(existingUser.getCpf());
+    assertThat(result.getName()).isEqualTo(existingUser.getName());
+    assertThat(result.getPhoneNumber()).isEqualTo(existingUser.getPhoneNumber());
+    assertThat(result.getEmail()).isEqualTo(partialUpdateRequest.getEmail());
+
+    verify(userGateway).findByCpf(EXISTING_CPF);
+    verify(userGateway).update(any());
   }
 }
