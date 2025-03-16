@@ -3,6 +3,7 @@ package com.api.lareserva.entrypoint.config;
 import com.api.lareserva.core.domain.exception.DomainException;
 import com.api.lareserva.core.domain.exception.ErrorDetail;
 import com.api.lareserva.core.usecase.exception.BusinessException;
+import com.api.lareserva.infra.gateway.exception.GatewayException;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -55,5 +56,12 @@ public class LaReservaControllerExceptionHandler {
                 domainException.getMessage(),
                 domainException.getErrorCode(),
                 domainException.getErrors()));
+  }
+
+  @ExceptionHandler({GatewayException.class})
+  public ResponseEntity<ErrorResponse> handleGatewayException(final GatewayException ex) {
+    log.error("Erro de gateway: {}", ex.getMessage());
+    final var errorResponse = new ErrorResponse(ex.getMessage(), ex.getCode(), null);
+    return ResponseEntity.badRequest().body(errorResponse);
   }
 }
