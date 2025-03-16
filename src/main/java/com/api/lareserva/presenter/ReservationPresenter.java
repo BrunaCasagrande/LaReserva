@@ -2,7 +2,6 @@ package com.api.lareserva.presenter;
 
 import com.api.lareserva.core.domain.Reservation;
 import com.api.lareserva.presenter.response.ReservationPresenterResponse;
-import com.api.lareserva.presenter.response.UserPresenterResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -16,20 +15,9 @@ public class ReservationPresenter {
         .reservationDate(reservation.getReservationDate())
         .reservationTime(reservation.getReservationTime())
         .numberOfPeople(reservation.getNumberOfPeople())
-        .user(toUserPresenterResponse(reservation))
-        .build();
-  }
-
-  private UserPresenterResponse toUserPresenterResponse(final Reservation reservation) {
-    if (reservation.getUser() == null) {
-      return null;
-    }
-    return UserPresenterResponse.builder()
-        .id(reservation.getUser().getId())
-        .name(reservation.getUser().getName())
-        .cpf(reservation.getUser().getCpf())
-        .phoneNumber(reservation.getUser().getPhoneNumber())
-        .email(reservation.getUser().getEmail())
+        .userId(reservation.getUser() != null ? reservation.getUser().getId() : null)
+        .restaurantId(
+            reservation.getRestaurant() != null ? reservation.getRestaurant().getId() : null)
         .build();
   }
 }

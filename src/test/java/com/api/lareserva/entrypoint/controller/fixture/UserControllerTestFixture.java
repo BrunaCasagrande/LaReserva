@@ -26,7 +26,7 @@ public class UserControllerTestFixture {
   }
 
   public static User validResponse() {
-    return validRequest(); // Mesma estrutura do validRequest()
+    return validRequest();
   }
 
   public static User updatedRequest() {

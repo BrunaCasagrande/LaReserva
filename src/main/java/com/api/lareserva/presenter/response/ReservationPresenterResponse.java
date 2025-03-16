@@ -10,4 +10,5 @@ public record ReservationPresenterResponse(
     Date reservationDate,
     LocalTime reservationTime,
     int numberOfPeople,
-    UserPresenterResponse user) {}
+    Integer userId,
+    Integer restaurantId) {}
