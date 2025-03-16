@@ -13,14 +13,14 @@ public class ReservationGatewayImplTestFixture {
 
   public static final Integer EXISTING_RESERVATION_ID = 1;
   public static final Date RESERVATION_DATE = new Date();
-  public static final LocalTime RESERVATION_TIME = LocalTime.of(19, 30); // Corrigido para LocalTime
+  public static final LocalTime RESERVATION_TIME = LocalTime.of(19, 30);
   public static final Integer NUMBER_OF_PEOPLE = 4;
 
   public static Reservation existingReservation() {
     return Reservation.builder()
         .id(EXISTING_RESERVATION_ID)
         .reservationDate(RESERVATION_DATE)
-        .reservationTime(RESERVATION_TIME) // Corrigido
+        .reservationTime(RESERVATION_TIME)
         .numberOfPeople(NUMBER_OF_PEOPLE)
         .restaurant(existingRestaurantDto())
         .user(existingUserDto())
@@ -30,7 +30,7 @@ public class ReservationGatewayImplTestFixture {
   public static Reservation newReservation() {
     return Reservation.builder()
         .reservationDate(RESERVATION_DATE)
-        .reservationTime(RESERVATION_TIME) // Corrigido
+        .reservationTime(RESERVATION_TIME)
         .numberOfPeople(NUMBER_OF_PEOPLE)
         .restaurant(existingRestaurantDto())
         .user(existingUserDto())
@@ -41,7 +41,7 @@ public class ReservationGatewayImplTestFixture {
     return ReservationEntity.builder()
         .id(EXISTING_RESERVATION_ID)
         .reservationDate(RESERVATION_DATE)
-        .reservationTime(RESERVATION_TIME) // Corrigido
+        .reservationTime(RESERVATION_TIME)
         .numberOfPeople(NUMBER_OF_PEOPLE)
         .restaurant(existingRestaurantEntity())
         .user(existingUserEntity())

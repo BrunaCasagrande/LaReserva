@@ -18,7 +18,7 @@ public class CreateReservation {
         reservationGateway.findByRestaurantAndDate(
             request.getRestaurant().getId(), request.getReservationDate());
 
-    boolean userHasReservation =
+    final boolean userHasReservation =
         existingReservations.stream()
             .anyMatch(
                 reservation ->
