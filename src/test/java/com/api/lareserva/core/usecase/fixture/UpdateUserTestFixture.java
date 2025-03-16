@@ -1,7 +1,7 @@
 package com.api.lareserva.core.usecase.fixture;
 
 import com.api.lareserva.core.domain.User;
-import com.api.lareserva.entrypoint.controller.request.UpdateUserRequest;
+import com.api.lareserva.core.dto.UpdateUserDto;
 
 public class UpdateUserTestFixture {
 
@@ -38,8 +38,8 @@ public class UpdateUserTestFixture {
         .build();
   }
 
-  public static UpdateUserRequest updateUserRequest() {
-    UpdateUserRequest request = new UpdateUserRequest();
+  public static UpdateUserDto updateUserRequest() {
+    UpdateUserDto request = new UpdateUserDto();
     request.setName("Updated Name");
     request.setPhoneNumber("11999999999");
     request.setEmail("updated@email.com");

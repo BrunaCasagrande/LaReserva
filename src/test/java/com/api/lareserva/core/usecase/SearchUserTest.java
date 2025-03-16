@@ -2,26 +2,23 @@ package com.api.lareserva.core.usecase;
 
 import static com.api.lareserva.core.usecase.fixture.SearchUserTestFixture.NONEXISTENT_CPF;
 import static com.api.lareserva.core.usecase.fixture.SearchUserTestFixture.validUserDomain;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.api.lareserva.core.gateway.UserGateway;
-import com.api.lareserva.core.usecase.exception.UserNotFoundException;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class SearchUserTest {
 
-  @Mock private UserGateway userGateway;
+  private final UserGateway userGateway = mock(UserGateway.class);
 
-  @InjectMocks private SearchUser searchUser;
+  private final SearchUser searchUser = new SearchUser(userGateway);
 
   @Test
   void shouldFindUserSuccessfullyByCpf() {
@@ -31,7 +28,9 @@ class SearchUserTest {
 
     final var result = searchUser.execute(user.getCpf());
 
-    assertThat(result).usingRecursiveComparison().isEqualTo(user);
+    assertThat(result).isPresent();
+    assertThat(result).hasValue(user);
+
     verify(userGateway).findByCpf(user.getCpf());
   }
 
@@ -40,9 +39,9 @@ class SearchUserTest {
 
     when(userGateway.findByCpf(NONEXISTENT_CPF)).thenReturn(Optional.empty());
 
-    assertThatThrownBy(() -> searchUser.execute(NONEXISTENT_CPF))
-        .isInstanceOf(UserNotFoundException.class)
-        .hasMessage("User with cpf=[99999999999] not found.");
+    final var response = searchUser.execute(NONEXISTENT_CPF);
+
+    assertThat(response).isEmpty();
 
     verify(userGateway).findByCpf(NONEXISTENT_CPF);
   }

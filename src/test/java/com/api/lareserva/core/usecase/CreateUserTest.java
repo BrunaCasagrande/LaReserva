@@ -1,12 +1,15 @@
 package com.api.lareserva.core.usecase;
 
 import static com.api.lareserva.core.usecase.fixture.CreateUserTestFixture.*;
-import static com.api.lareserva.infra.controller.fixture.UserControllerTestFixture.validRequest;
+import static com.api.lareserva.entrypoint.controller.fixture.UserControllerTestFixture.validRequest;
 import static java.util.Optional.empty;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.api.lareserva.core.domain.User;
 import com.api.lareserva.core.gateway.UserGateway;
