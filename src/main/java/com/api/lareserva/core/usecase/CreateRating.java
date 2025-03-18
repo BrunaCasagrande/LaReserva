@@ -15,9 +15,9 @@ public class CreateRating {
 
   public Rating execute(final Rating request) {
 
-    List<Rating> existingRatings = ratingGateway.findByUser(request.getUser().getId());
+    final List<Rating> existingRatings = ratingGateway.findByUser(request.getUser().getId());
 
-    boolean alreadyRatedToday =
+    final boolean alreadyRatedToday =
         existingRatings.stream()
             .anyMatch(
                 rating ->

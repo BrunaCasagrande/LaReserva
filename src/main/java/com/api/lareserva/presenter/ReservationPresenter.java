@@ -15,9 +15,8 @@ public class ReservationPresenter {
         .reservationDate(reservation.getReservationDate())
         .reservationTime(reservation.getReservationTime())
         .numberOfPeople(reservation.getNumberOfPeople())
-        .userId(reservation.getUser() != null ? reservation.getUser().getId() : null)
-        .restaurantId(
-            reservation.getRestaurant() != null ? reservation.getRestaurant().getId() : null)
+            .userId(reservation.getUser().getId())
+            .restaurantId(reservation.getRestaurant().getId())
         .build();
   }
 }
