@@ -71,22 +71,6 @@ public class RestaurantGatewayImplTestFixture {
         .build();
   }
 
-  public static Restaurant updateRestaurantGatewayResponse() {
-    return Restaurant.builder()
-        .id(1)
-        .restaurantName(RESTAURANT_NAME)
-        .cnpj(CNPJ)
-        .address("New address")
-        .city(CITY)
-        .phoneNumber("0123456789")
-        .typeOfFood("New food type")
-        .capacity(100)
-        .numberOfTables(20)
-        .openingHour(List.of(validOpeningHour()))
-        .email("newEmail@gmail.com")
-        .build();
-  }
-
   public static RestaurantEntity updateRestaurantEntity() {
     return RestaurantEntity.builder()
         .id(1)

@@ -1,12 +1,18 @@
 package com.api.lareserva.infra.gateway;
 
-import static com.api.lareserva.infra.gateway.fixture.RestaurantGatewayImplTestFixture.*;
+import static com.api.lareserva.infra.gateway.fixture.RestaurantGatewayImplTestFixture.updateRestaurantEntity;
+import static com.api.lareserva.infra.gateway.fixture.RestaurantGatewayImplTestFixture.validOpeningHourEntity;
+import static com.api.lareserva.infra.gateway.fixture.RestaurantGatewayImplTestFixture.validRestaurantDomain;
+import static com.api.lareserva.infra.gateway.fixture.RestaurantGatewayImplTestFixture.validRestaurantEntity;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.api.lareserva.infra.gateway.exception.GatewayException;
 import com.api.lareserva.infra.persistence.entity.OpeningHourEntity;
