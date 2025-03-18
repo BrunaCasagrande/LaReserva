@@ -1,6 +1,14 @@
 package com.api.lareserva.infra.gateway;
 
-import static com.api.lareserva.infra.gateway.fixture.UserGatewayImplTestFixture.*;
+import static com.api.lareserva.infra.gateway.fixture.UserGatewayImplTestFixture.CPF;
+import static com.api.lareserva.infra.gateway.fixture.UserGatewayImplTestFixture.NONEXISTENT_CPF;
+import static com.api.lareserva.infra.gateway.fixture.UserGatewayImplTestFixture.UPDATED_EMAIL;
+import static com.api.lareserva.infra.gateway.fixture.UserGatewayImplTestFixture.UPDATED_PHONE_NUMBER;
+import static com.api.lareserva.infra.gateway.fixture.UserGatewayImplTestFixture.nonExistentUserDomain;
+import static com.api.lareserva.infra.gateway.fixture.UserGatewayImplTestFixture.updatedUserDomain;
+import static com.api.lareserva.infra.gateway.fixture.UserGatewayImplTestFixture.updatedUserEntity;
+import static com.api.lareserva.infra.gateway.fixture.UserGatewayImplTestFixture.userDomain;
+import static com.api.lareserva.infra.gateway.fixture.UserGatewayImplTestFixture.userEntity;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;

@@ -1,6 +1,12 @@
 package com.api.lareserva.core.usecase;
 
-import static com.api.lareserva.core.usecase.fixture.CreateUserTestFixture.*;
+import static com.api.lareserva.core.usecase.fixture.CreateUserTestFixture.CPF;
+import static com.api.lareserva.core.usecase.fixture.CreateUserTestFixture.EMAIL;
+import static com.api.lareserva.core.usecase.fixture.CreateUserTestFixture.NAME;
+import static com.api.lareserva.core.usecase.fixture.CreateUserTestFixture.PASSWORD;
+import static com.api.lareserva.core.usecase.fixture.CreateUserTestFixture.PHONE_NUMBER;
+import static com.api.lareserva.core.usecase.fixture.CreateUserTestFixture.validUserGatewayResponse;
+import static com.api.lareserva.core.usecase.fixture.CreateUserTestFixture.validUserRequest;
 import static com.api.lareserva.entrypoint.controller.fixture.UserControllerTestFixture.validRequest;
 import static java.util.Optional.empty;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;

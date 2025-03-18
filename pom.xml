@@ -108,6 +108,7 @@
 					<excludes>
 						<exclude>**/com/api/lareserva/core/dto/**</exclude>
 						<exclude>**/com/api/lareserva/entrypoint/config/**</exclude>
+						<exclude>**/com/api/lareserva/presenter/**</exclude>
 					</excludes>
 				</configuration>
 				<executions>
