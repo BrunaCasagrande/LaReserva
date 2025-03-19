@@ -15,8 +15,8 @@ public class RatingPresenter {
         .stars(rating.getStars())
         .comment(rating.getComment())
         .date(rating.getDate())
-            .restaurantId(rating.getRestaurant().getId())
-            .userId(rating.getUser().getId())
+        .restaurantId(rating.getRestaurant().getId())
+        .userId(rating.getUser().getId())
         .build();
   }
 }
