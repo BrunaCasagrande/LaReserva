@@ -34,7 +34,8 @@ public class RatingController {
     final var ratingCreated = this.createRating.execute(request);
 
     URI location =
-        ServletUriComponentsBuilder.fromPath("/lareserva/rating/{id}")
+        ServletUriComponentsBuilder.fromCurrentRequest()
+            .path("/{id}")
             .buildAndExpand(ratingCreated.getId())
             .toUri();
 
@@ -46,10 +47,6 @@ public class RatingController {
       @PathVariable final Integer restaurantId) {
     final var ratings = this.searchRatingByRestaurant.execute(restaurantId);
 
-    if (ratings.isEmpty()) {
-      return ResponseEntity.notFound().build();
-    }
-
     return ResponseEntity.ok(ratings.stream().map(ratingPresenter::parseToResponse).toList());
   }
 
@@ -57,10 +54,6 @@ public class RatingController {
   public ResponseEntity<List<RatingPresenterResponse>> findByUser(
       @PathVariable final Integer userId) {
     final var ratings = this.searchRatingByUser.execute(userId);
-
-    if (ratings.isEmpty()) {
-      return ResponseEntity.notFound().build();
-    }
 
     return ResponseEntity.ok(ratings.stream().map(ratingPresenter::parseToResponse).toList());
   }

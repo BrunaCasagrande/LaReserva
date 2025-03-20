@@ -1,121 +1,122 @@
 package com.api.lareserva.entrypoint.controller;
 
-import static com.api.lareserva.entrypoint.controller.fixture.RatingControllerTestFixture.RESTAURANT_ID;
-import static com.api.lareserva.entrypoint.controller.fixture.RatingControllerTestFixture.USER_ID;
-import static com.api.lareserva.entrypoint.controller.fixture.RatingControllerTestFixture.validRating;
-import static com.api.lareserva.entrypoint.controller.fixture.RatingControllerTestFixture.validRatingPresenterResponse;
-import static org.assertj.core.api.Assertions.assertThat;
+import static com.api.lareserva.entrypoint.controller.fixture.RatingControllerTestFixture.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.api.lareserva.core.domain.Rating;
 import com.api.lareserva.core.usecase.CreateRating;
 import com.api.lareserva.core.usecase.SearchRatingByRestaurant;
 import com.api.lareserva.core.usecase.SearchRatingByUser;
 import com.api.lareserva.presenter.RatingPresenter;
-import com.api.lareserva.presenter.response.RatingPresenterResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
 
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("application-test")
 class RatingControllerTest {
 
-  @Mock private CreateRating createRating;
-  @Mock private SearchRatingByRestaurant searchRatingByRestaurant;
-  @Mock private SearchRatingByUser searchRatingByUser;
-  @Mock private RatingPresenter ratingPresenter;
+  private static final String BASE_URL = "/lareserva/rating";
 
-  @InjectMocks private RatingController ratingController;
+  @Autowired private MockMvc mockMvc;
+  @Autowired private ObjectMapper objectMapper;
 
-  @BeforeEach
-  void setUp() {
-    MockitoAnnotations.openMocks(this);
-  }
+  @MockBean private CreateRating createRating;
+  @MockBean private SearchRatingByRestaurant searchRatingByRestaurant;
+  @MockBean private SearchRatingByUser searchRatingByUser;
+  @MockBean private RatingPresenter ratingPresenter;
 
   @Test
-  void shouldCreateRatingSuccessfully() {
-    final var rating = validRating();
+  void shouldCreateRatingSuccessfully() throws Exception {
+    final var request = validRatingRequest();
+    final var response = validRatingResponse();
     final var presenterResponse = validRatingPresenterResponse();
 
-    when(createRating.execute(rating)).thenReturn(rating);
-    when(ratingPresenter.parseToResponse(rating)).thenReturn(presenterResponse);
+    when(createRating.execute(any(Rating.class))).thenReturn(response);
+    when(ratingPresenter.parseToResponse(response)).thenReturn(presenterResponse);
 
-    final ResponseEntity<RatingPresenterResponse> response = ratingController.create(rating);
-
-    assertThat(response.getStatusCodeValue()).isEqualTo(201);
-    assertThat(response.getBody()).isEqualTo(presenterResponse);
-
-    verify(createRating).execute(rating);
-    verify(ratingPresenter).parseToResponse(rating);
+    mockMvc
+        .perform(
+            post(BASE_URL)
+                .contentType("application/json")
+                .content(objectMapper.writeValueAsString(request)))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.id").value(response.getId()))
+        .andExpect(jsonPath("$.stars").value(response.getStars()))
+        .andExpect(jsonPath("$.comment").value(response.getComment()))
+        .andExpect(jsonPath("$.restaurantId").value(response.getRestaurant().getId()))
+        .andExpect(jsonPath("$.userId").value(response.getUser().getId()));
   }
 
   @Test
-  void shouldReturnRatingsForRestaurantSuccessfully() {
-    final var ratings = List.of(validRating());
+  void shouldReturnRatingsForRestaurantSuccessfully() throws Exception {
+    final var response = List.of(validRatingResponse());
     final var presenterResponses = List.of(validRatingPresenterResponse());
 
-    when(searchRatingByRestaurant.execute(RESTAURANT_ID)).thenReturn(ratings);
-    when(ratingPresenter.parseToResponse(any())).thenReturn(presenterResponses.get(0));
+    when(searchRatingByRestaurant.execute(RESTAURANT_ID)).thenReturn(response);
+    when(ratingPresenter.parseToResponse(any(Rating.class))).thenReturn(presenterResponses.get(0));
 
-    final ResponseEntity<List<RatingPresenterResponse>> response =
-        ratingController.findByRestaurant(RESTAURANT_ID);
-
-    assertThat(response.getStatusCodeValue()).isEqualTo(200);
-    assertThat(response.getBody()).isEqualTo(presenterResponses);
-
-    verify(searchRatingByRestaurant).execute(RESTAURANT_ID);
-    verify(ratingPresenter, times(ratings.size())).parseToResponse(any());
+    mockMvc
+        .perform(
+            get(BASE_URL + "/restaurant/{restaurantId}", RESTAURANT_ID)
+                .contentType("application/json"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].id").value(response.get(0).getId()))
+        .andExpect(jsonPath("$[0].stars").value(response.get(0).getStars()))
+        .andExpect(jsonPath("$[0].comment").value(response.get(0).getComment()))
+        .andExpect(jsonPath("$[0].restaurantId").value(response.get(0).getRestaurant().getId()))
+        .andExpect(jsonPath("$[0].userId").value(response.get(0).getUser().getId()));
   }
 
   @Test
-  void shouldReturnNotFoundWhenNoRatingsForRestaurant() {
+  void shouldReturnNotFoundWhenNoRatingsForRestaurant() throws Exception {
     when(searchRatingByRestaurant.execute(RESTAURANT_ID)).thenReturn(List.of());
 
-    final ResponseEntity<List<RatingPresenterResponse>> response =
-        ratingController.findByRestaurant(RESTAURANT_ID);
-
-    assertThat(response.getStatusCodeValue()).isEqualTo(404);
-    assertThat(response.getBody()).isNull();
-
-    verify(searchRatingByRestaurant).execute(RESTAURANT_ID);
-    verifyNoInteractions(ratingPresenter);
+    mockMvc
+        .perform(
+            get(BASE_URL + "/restaurant/{restaurantId}", RESTAURANT_ID)
+                .contentType("application/json"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$").isEmpty());
   }
 
   @Test
-  void shouldReturnRatingsForUserSuccessfully() {
-    final var ratings = List.of(validRating());
+  void shouldReturnRatingsForUserSuccessfully() throws Exception {
+    final var response = List.of(validRatingResponse());
     final var presenterResponses = List.of(validRatingPresenterResponse());
 
-    when(searchRatingByUser.execute(USER_ID)).thenReturn(ratings);
-    when(ratingPresenter.parseToResponse(any())).thenReturn(presenterResponses.get(0));
+    when(searchRatingByUser.execute(USER_ID)).thenReturn(response);
+    when(ratingPresenter.parseToResponse(any(Rating.class))).thenReturn(presenterResponses.get(0));
 
-    final ResponseEntity<List<RatingPresenterResponse>> response =
-        ratingController.findByUser(USER_ID);
-
-    assertThat(response.getStatusCodeValue()).isEqualTo(200);
-    assertThat(response.getBody()).isEqualTo(presenterResponses);
-
-    verify(searchRatingByUser).execute(USER_ID);
-    verify(ratingPresenter, times(ratings.size())).parseToResponse(any());
+    mockMvc
+        .perform(get(BASE_URL + "/user/{userId}", USER_ID).contentType("application/json"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].id").value(response.get(0).getId()))
+        .andExpect(jsonPath("$[0].stars").value(response.get(0).getStars()))
+        .andExpect(jsonPath("$[0].comment").value(response.get(0).getComment()))
+        .andExpect(jsonPath("$[0].restaurantId").value(response.get(0).getRestaurant().getId()))
+        .andExpect(jsonPath("$[0].userId").value(response.get(0).getUser().getId()));
   }
 
   @Test
-  void shouldReturnNotFoundWhenNoRatingsForUser() {
+  void shouldReturnNotFoundWhenNoRatingsForUser() throws Exception {
     when(searchRatingByUser.execute(USER_ID)).thenReturn(List.of());
 
-    final ResponseEntity<List<RatingPresenterResponse>> response =
-        ratingController.findByUser(USER_ID);
-
-    assertThat(response.getStatusCodeValue()).isEqualTo(404);
-    assertThat(response.getBody()).isNull();
-
-    verify(searchRatingByUser).execute(USER_ID);
-    verifyNoInteractions(ratingPresenter);
+    mockMvc
+        .perform(get(BASE_URL + "/user/{userId}", USER_ID).contentType("application/json"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$").isEmpty());
   }
 }

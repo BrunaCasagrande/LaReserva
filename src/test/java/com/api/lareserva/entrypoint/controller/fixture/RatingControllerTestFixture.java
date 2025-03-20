@@ -15,7 +15,17 @@ public class RatingControllerTestFixture {
   public static final Integer RESTAURANT_ID = 10;
   public static final Integer USER_ID = 5;
 
-  public static Rating validRating() {
+  public static Rating validRatingRequest() {
+    return Rating.builder()
+        .stars(STARS)
+        .comment(COMMENT)
+        .date(RATING_DATE)
+        .restaurant(validRestaurant())
+        .user(validUser())
+        .build();
+  }
+
+  public static Rating validRatingResponse() {
     return Rating.builder()
         .id(RATING_ID)
         .stars(STARS)
