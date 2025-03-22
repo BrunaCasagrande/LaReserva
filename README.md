@@ -86,11 +86,12 @@ Os endpoints estão documentados via **Swagger**:
 ```json
 curl --location 'localhost:8080/lareserva/user' \
 --header 'Content-Type: application/json' \
---data '{
-  "name": "Bruna Casagrande",
-  "cpf": "12345678900",
-  "phoneNumber": "11999999999",
-  "email": "bruna@email.com"
+--data-raw '{
+"name": "Gabis",
+"cpf": "12312312312",
+"phoneNumber": "01234567890",
+"email": "gabis@gmail.com",
+"password": "123aS!12"
 }'
 ```
 
@@ -98,23 +99,71 @@ curl --location 'localhost:8080/lareserva/user' \
 ```json
 curl --location 'localhost:8080/lareserva/restaurant' \
 --header 'Content-Type: application/json' \
---data '{
-  "restaurantName": "Mamma Ristorante",
-  "cnpj": "12.345.678/0001-99",
-  "address": "Avenida Itália, 123",
-  "phoneNumber": "11988887777",
-  "typeOfFood": "Italiana"
+--data-raw '{
+"restaurantName": "Sabor & Arte",
+"cnpj": "12345678000199",
+"address": "Rua das Flores, 123",
+"city": "São Paulo",
+"phoneNumber": "+5511998765432",
+"typeOfFood": "Italiana",
+"capacity": 50,
+"numberOfTables": 20,
+"openingHour": [
+{
+"dayOfWeek": "Monday",
+"openTime": "18:00",
+"closeTime": "22:00"
+},
+{
+"dayOfWeek": "Tuesday",
+"openTime": "11:00",
+"closeTime": "22:00"
+},
+{
+"dayOfWeek": "Wednesday",
+"openTime": "11:00",
+"closeTime": "22:00"
+},
+{
+"dayOfWeek": "Thursday",
+"openTime": "11:00",
+"closeTime": "22:00"
+},
+{
+"dayOfWeek": "Friday",
+"openTime": "11:00",
+"closeTime": "23:00"
+},
+{
+"dayOfWeek": "Saturday",
+"openTime": "11:00",
+"closeTime": "23:00"
+},
+{
+"dayOfWeek": "Sunday",
+"openTime": "11:00",
+"closeTime": "15:00"
+}
+],
+"email": "contato@saborearte.com",
+"password": "Senha@123"
 }'
 ```
 
 3. **Cadastro de Reserva:**
 ```json
-curl --location 'localhost:8080/lareserva/reservation' \
+curl --location 'http://localhost:8080/lareserva/reservation' \
 --header 'Content-Type: application/json' \
 --data '{
-  "restaurantId": 1,
-  "userId": 5,
-  "reservationDate": "2025-03-20T19:00:00"
+"reservationDate": "2025-05-15",
+"reservationTime": "19:30",
+"numberOfPeople": 2,
+"restaurant": {
+"id": 3
+},
+"user": {
+"id": 2
+}
 }'
 ```
 
@@ -132,36 +181,34 @@ curl --location 'localhost:8080/lareserva/restaurant/search?restaurantName=Sabor
 
 6. **Busca de Usuário Por CPF:**
 ```json
-curl --location 'localhost:8080/lareserva/user/12345678900'
+curl --location 'http://localhost:8080/lareserva/user/12312312312'
 ```
 
 7. **Busca de Reserva por Id:**
 ```json
-curl --location 'localhost:8080/lareserva/reservation/1'
+curl --location 'http://localhost:8080/lareserva/reservation/1'
 ```
 
 8. **Busca de Avaliações por Restaurante_Id:**
 ```json
-curl --location 'localhost:8080/lareserva/rating/restaurant/1'
+curl --location 'http://localhost:8080/lareserva/rating/restaurant/3'
 ```
 
 9. **Busca de Avaliações por User_Id:**
 ```json
-curl --location 'http://localhost:8080/lareserva/rating/user/5' 
+curl --location 'http://localhost:8080/lareserva/rating/user/2'
 ```
 
 10. **Atualização do Usuário por CPF:**
 ```json
-curl --location --request PUT 'http://localhost:8080/lareserva/user/12345678900' \
+curl --location --request PUT 'http://localhost:8080/lareserva/user/12312312312' \
 --header 'Content-Type: application/json' \
 --data-raw '{
 "name": "Bruna Casagrande",
-"cpf": "12345678900",
 "phoneNumber": "11999999133",
 "email": "nova@email.com",
 "password": "NewPassword123!"
-}
-'
+}'
 ```
 
 11. **Atualização do Restaurante por CNPJ:**
@@ -170,25 +217,55 @@ curl --location --request PUT 'localhost:8080/lareserva/restaurant/1234567800019
 --header 'Content-Type: application/json' \
 --data '{
 "address": "Rua das Castanhas, 123"
-}' 
+}'
 ```
 
 12. **Atualização dos Horários do Restaurante pelo Restaurant_Id:**
 ```json
-curl --location --request PUT 'localhost:8080/lareserva/opening-hours/1' \
+curl --location --request PUT 'localhost:8080/lareserva/opening-hours/3' \
 --header 'Content-Type: application/json' \
 --data '[
 {
-"id": 1,
+"id": 34,
 "dayOfWeek": "Monday",
-"openTime": "12:00",
-"closeTime": "21:00"
+"openTime": "18:00",
+"closeTime": "22:00"
 },
 {
-"id": 2,
+"id": 35,
 "dayOfWeek": "Tuesday",
-"openTime": "12:00",
-"closeTime": "21:00"
+"openTime": "11:00",
+"closeTime": "22:00"
+},
+{
+"id": 36,
+"dayOfWeek": "Wednesday",
+"openTime": "11:00",
+"closeTime": "22:00"
+},
+{
+"id": 37,
+"dayOfWeek": "Thursday",
+"openTime": "11:00",
+"closeTime": "22:00"
+},
+{
+"id": 38,
+"dayOfWeek": "Friday",
+"openTime": "11:00",
+"closeTime": "23:00"
+},
+{
+"id": 39,
+"dayOfWeek": "Saturday",
+"openTime": "11:00",
+"closeTime": "23:00"
+},
+{
+"id": 40,
+"dayOfWeek": "Sunday",
+"openTime": "11:00",
+"closeTime": "15:00"
 }
 ]'
 ```
@@ -199,31 +276,36 @@ curl --location --request PUT 'http://localhost:8080/lareserva/reservation/1' \
 --header 'Content-Type: application/json' \
 --data '{
 "reservationDate": "2025-05-15",
-"reservationTime": "19:30",
+"reservationTime": "20:30",
 "numberOfPeople": 2
 }'
 ```
 
 14. **Exclusão de Reserva por Id:**
 ```json
-curl --location --request DELETE 'localhost:8080/lareserva/reservation/1'
+curl --location --request DELETE 'http://localhost:8080/lareserva/reservation/1'
 ```
 
-15. **Registro de Avaliação:**
+15. **Cadastrar uma Avaliação:**
 ```json
-curl --location 'localhost:8080/lareserva/rating' \
+curl --location 'http://localhost:8080/lareserva/rating' \
 --header 'Content-Type: application/json' \
 --data '{
-  "userId": 1,
-  "restaurantId": 1,
-  "stars": 5,
-  "comment": "Ótima comida e atendimento!"
+"stars": 5,
+"comment": "Excellent food and service!",
+"date": "2025-05-15T00:00:00.000+00:00",
+"restaurant": {
+"id": 3
+},
+"user": {
+"id": 2
+}
 }'
 ```
 
-16. **Exclusão de Usuário:**
+16. **Exclusão de Usuário por CPF:**
 ```json
-curl --location --request DELETE 'localhost:8080/lareserva/user/1'
+curl --location --request DELETE 'http://localhost:8080/lareserva/user/12312312312'
 ```
 
 17. **Exclusão do Restaurante por CNPJ:**

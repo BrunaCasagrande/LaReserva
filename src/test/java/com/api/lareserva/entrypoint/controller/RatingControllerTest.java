@@ -25,7 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("application-test")
+@ActiveProfiles("test")
 class RatingControllerTest {
 
   private static final String BASE_URL = "/lareserva/rating";

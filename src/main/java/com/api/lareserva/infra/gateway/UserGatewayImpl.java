@@ -50,6 +50,7 @@ public class UserGatewayImpl implements UserGateway {
               .findByCpf(user.getCpf())
               .orElseThrow(() -> new GatewayException(format(FIND_ERROR_MESSAGE, user.getCpf())));
 
+      entity.setName(user.getName());
       entity.setPhoneNumber(user.getPhoneNumber());
       entity.setEmail(user.getEmail());
       entity.setPassword(user.getPassword());
