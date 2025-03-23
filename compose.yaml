@@ -4,23 +4,24 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - mysql
+      postgres:
+        condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/dbname?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-      SPRING_DATASOURCE_USERNAME: user
-      SPRING_DATASOURCE_PASSWORD: password
-      SPRING_PROFILES_ACTIVE: mysql
-  mysql:
-    image: mysql:8
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/lareserva
+      SPRING_DATASOURCE_USERNAME: lareserva
+      SPRING_DATASOURCE_PASSWORD: 1VvvT0Ub9efOd2Ml99SmDPihIT1dn6OB
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+  postgres:
+    image: postgres:latest
     ports:
-      - "3306:3306"
+      - "5432:5432"
     environment:
-      MYSQL_DATABASE: dbname
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
-    volumes:
-      - mysql-data:/var/lib/mysql
-
-volumes:
-  mysql-data:
+      POSTGRES_USER: lareserva
+      POSTGRES_PASSWORD: 1VvvT0Ub9efOd2Ml99SmDPihIT1dn6OB
+      POSTGRES_DB: lareserva
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U lareserva" ]
+      interval: 5s
+      retries: 5
+      timeout: 3s

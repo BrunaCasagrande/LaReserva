@@ -2,7 +2,7 @@
 Esse é o projeto da **Fase 3** da Especialização em Arquitetura e Desenvolvimento Java da FIAP.
 Uma API REST para gestão de reservas e avaliações de restaurantes. A aplicação foi desenvolvida em **Java 17**, 
 utilizando **Spring Boot**, **Maven**, um banco de dados **H2** para testes, **Mockito** e **JUnit 5** para testes 
-unitários, **Lombok** para facilitar o desenvolvimento, **banco mysql** para produção e documentação gerada pelo **Swagger**.
+unitários, **Lombok** para facilitar o desenvolvimento, **banco postgres** para produção e documentação gerada pelo **Swagger**.
 
 ## Descrição do Projeto
 O objetivo desta API é permitir que restaurantes possam gerenciar reservas, registrar avaliações de clientes e armazenar 
@@ -23,7 +23,7 @@ A API permite:
 - **Spring Data JPA**
 - **Maven**
 - **Banco de Dados H2**
-- **Banco de Dados MySQL**
+- **Banco de Dados Postgres**
 - **Mockito** e **JUnit 5**
 - **Lombok**
 - **Swagger**
@@ -66,25 +66,23 @@ O projeto segue uma arquitetura modularizada, organizada nas seguintes camadas:
    ```
 
 ## Uso da API
-Para acessar o banco de dados MySQL e visualizar os registros:
-- **SPRING DATASOURCE URL**: jdbc:mysql://mysql:3306/dbname?useSSL=false&serverTimezone=UTC
-- **SPRING DATASOURCE USERNAME**: user
-- **SPRING DATASOURCE PASSWORD**: password
-- **SPRING PROFILES ACTIVE**: mysql
-- **MYSQL PORTS**: 3306
-- **MYSQL DATABASE**: dbname
-- **MYSQL ROOT PASSWORD**: rootpassword
-- **MYSQL USER**: user
-- **MYSQL PASSWORD**: password
+Para acessar o banco de dados Postgres e visualizar os registros:
+- **SPRING DATASOURCE URL**: jdbc:postgresql://dpg-cvfi46lds78s73fm3vug-a:5432/lareserva
+- **SPRING DATASOURCE USERNAME**: lareserva_user
+- **SPRING DATASOURCE PASSWORD**: 1VvvT0Ub9efOd2Ml99SmDPihIT1dn6OB
+- **POSTGRES PORTS**: 5432
+- **POSTGRES DATABASE**: lareserva
+- **POSTGRES USER**: lareserva_user
+- **POSTGRES PASSWORD**: 1VvvT0Ub9efOd2Ml99SmDPihIT1dn6OB
 
 Os endpoints estão documentados via **Swagger**:
-- **Swagger UI**: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
-- **Swagger JSON**: [http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs)
+- **Swagger UI**: https://lareserva-9.onrender.com/swagger-ui/index.html
+- **Swagger JSON**: https://lareserva-9.onrender.com/v3/api-docs
 
 ### Possibilidades de Chamadas da API
 1. **Cadastro de Usuário:**
 ```json
-curl --location 'localhost:8080/lareserva/user' \
+curl --location 'https://lareserva-9.onrender.com/lareserva/user' \
 --header 'Content-Type: application/json' \
 --data-raw '{
 "name": "Gabis",
@@ -97,7 +95,7 @@ curl --location 'localhost:8080/lareserva/user' \
 
 2. **Cadastro de Restaurante:**
 ```json
-curl --location 'localhost:8080/lareserva/restaurant' \
+curl --location 'https://lareserva-9.onrender.com/lareserva/restaurant' \
 --header 'Content-Type: application/json' \
 --data-raw '{
 "restaurantName": "Sabor & Arte",
@@ -152,7 +150,7 @@ curl --location 'localhost:8080/lareserva/restaurant' \
 
 3. **Cadastro de Reserva:**
 ```json
-curl --location 'http://localhost:8080/lareserva/reservation' \
+curl --location 'https://lareserva-9.onrender.com/lareserva/reservation' \
 --header 'Content-Type: application/json' \
 --data '{
 "reservationDate": "2025-05-15",
@@ -169,39 +167,39 @@ curl --location 'http://localhost:8080/lareserva/reservation' \
 
 4. **Busca de Restaurante Por CNPJ:**
 ```json
-curl --location 'localhost:8080/lareserva/restaurant/12345678000199' \
+curl --location 'https://lareserva-9.onrender.com/lareserva/restaurant/12345678000199' \
 --header 'Content-Type: application/json'
 ```
 
 5. **Busca de Restaurantes:**
 ```json
-curl --location 'localhost:8080/lareserva/restaurant/search?restaurantName=Sabor%20%26%20Arte&city=S%C3%A3o%20Paulo&typeOfFood=Italiana' \
+curl --location 'https://lareserva-9.onrender.com/lareserva/restaurant/search?restaurantName=Sabor%20%26%20Arte&city=S%C3%A3o%20Paulo&typeOfFood=Italiana' \
 --header 'Content-Type: application/json'
 ```
 
 6. **Busca de Usuário Por CPF:**
 ```json
-curl --location 'http://localhost:8080/lareserva/user/12312312312'
+curl --location 'https://lareserva-9.onrender.com/lareserva/user/12312312312'
 ```
 
 7. **Busca de Reserva por Id:**
 ```json
-curl --location 'http://localhost:8080/lareserva/reservation/1'
+curl --location 'https://lareserva-9.onrender.com/lareserva/reservation/1'
 ```
 
 8. **Busca de Avaliações por Restaurante_Id:**
 ```json
-curl --location 'http://localhost:8080/lareserva/rating/restaurant/3'
+curl --location 'https://lareserva-9.onrender.com/lareserva/rating/restaurant/3'
 ```
 
 9. **Busca de Avaliações por User_Id:**
 ```json
-curl --location 'http://localhost:8080/lareserva/rating/user/2'
+curl --location 'https://lareserva-9.onrender.com/lareserva/rating/user/2'
 ```
 
 10. **Atualização do Usuário por CPF:**
 ```json
-curl --location --request PUT 'http://localhost:8080/lareserva/user/12312312312' \
+curl --location --request PUT 'https://lareserva-9.onrender.com/lareserva/user/12312312312' \
 --header 'Content-Type: application/json' \
 --data-raw '{
 "name": "Bruna Casagrande",
@@ -213,7 +211,7 @@ curl --location --request PUT 'http://localhost:8080/lareserva/user/12312312312'
 
 11. **Atualização do Restaurante por CNPJ:**
 ```json
-curl --location --request PUT 'localhost:8080/lareserva/restaurant/12345678000199' \
+curl --location --request PUT 'https://lareserva-9.onrender.com/lareserva/restaurant/12345678000199' \
 --header 'Content-Type: application/json' \
 --data '{
 "address": "Rua das Castanhas, 123"
@@ -222,7 +220,7 @@ curl --location --request PUT 'localhost:8080/lareserva/restaurant/1234567800019
 
 12. **Atualização dos Horários do Restaurante pelo Restaurant_Id:**
 ```json
-curl --location --request PUT 'localhost:8080/lareserva/opening-hours/3' \
+curl --location --request PUT 'https://lareserva-9.onrender.com/lareserva/opening-hours/3' \
 --header 'Content-Type: application/json' \
 --data '[
 {
@@ -272,7 +270,7 @@ curl --location --request PUT 'localhost:8080/lareserva/opening-hours/3' \
 
 13. **Atualização da Reserva por Id:**
 ```json
-curl --location --request PUT 'http://localhost:8080/lareserva/reservation/1' \
+curl --location --request PUT 'https://lareserva-9.onrender.com/lareserva/reservation/1' \
 --header 'Content-Type: application/json' \
 --data '{
 "reservationDate": "2025-05-15",
@@ -283,12 +281,12 @@ curl --location --request PUT 'http://localhost:8080/lareserva/reservation/1' \
 
 14. **Exclusão de Reserva por Id:**
 ```json
-curl --location --request DELETE 'http://localhost:8080/lareserva/reservation/1'
+curl --location --request DELETE 'https://lareserva-9.onrender.com/lareserva/reservation/1'
 ```
 
 15. **Cadastrar uma Avaliação:**
 ```json
-curl --location 'http://localhost:8080/lareserva/rating' \
+curl --location 'https://lareserva-9.onrender.com/lareserva/rating' \
 --header 'Content-Type: application/json' \
 --data '{
 "stars": 5,
@@ -305,12 +303,12 @@ curl --location 'http://localhost:8080/lareserva/rating' \
 
 16. **Exclusão de Usuário por CPF:**
 ```json
-curl --location --request DELETE 'http://localhost:8080/lareserva/user/12312312312'
+curl --location --request DELETE 'https://lareserva-9.onrender.com/lareserva/user/12312312312'
 ```
 
 17. **Exclusão do Restaurante por CNPJ:**
 ```json
-curl --location --request DELETE 'localhost:8080/lareserva/restaurant/12345678000199' \
+curl --location --request DELETE 'https://lareserva-9.onrender.com/lareserva/restaurant/12345678000199' \
 --header 'Content-Type: application/json'
 ```
 
@@ -319,7 +317,7 @@ Para rodar os testes unitários:
 ```bash
 mvn test
 ```
-Lembrando que o docker precisa estar rodando para os testes funcionarem.
+Lembrando que o docker precisa estar rodando para os testes funcionarem: docker-compose up -d
 
 **Rodar o coverage:**
    ```bash
