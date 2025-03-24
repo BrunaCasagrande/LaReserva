@@ -10,12 +10,11 @@ informações sobre seus serviços e disponibilidade.
 
 ## Funcionalidades
 A API permite:
-- **Cadastrar** restaurantes e seus respectivos dados.
-- **Cadastrar** usuários e seus respectivos dados.
-- **Gerenciar reservas** permitindo que usuários agendem, alterem ou cancelem reservas em restaurantes cadastrados.
-- **Registrar avaliações** dos usuários sobre os restaurantes.
-- **Buscar restaurantes**, usuários,reservas e avaliações.
-- **Excluir** reservas, restaurantes e usuários quando necessário.
+- **Cadastrar, buscar de duas formas diferentes, atualizar e deletar** restaurantes e seus respectivos dados.
+- **Atualizar** os horários de funcionamento dos restaurantes.
+- **Cadastrar, buscar, atualizar e deletar** usuários e seus respectivos dados.
+- **Cadastrar, buscar, atualizar e deletar** reservas, dando flexibilidade para o usuário gerenciar o agendamento da melhor forma.
+- **Registrar avaliações** dos usuários sobre os restaurantes, assim como duas formas de buscas, uma pelo user_id outra pelo restaurant-id.
 
 ## Tecnologias Utilizadas
 - **Java 17**
